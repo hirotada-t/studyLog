@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header bordered class="bg-header text-white">
       <q-toolbar>
-        <q-toolbar-title class="text-center">Home</q-toolbar-title>
+        <q-toolbar-title class="text-center">{{ $route.name }}</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -23,16 +23,40 @@
     </q-drawer>
 
     <q-footer bordered class="bg-primary text-dark">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
+      <div v-if="onNavBtn[$route.name!.toString()]">
+        <q-btn class="navigate__btn navigate__left absolute bg-dark">
+          <q-icon size="45px" style="color: #ccc" name="arrow_back_ios_new" />
+        </q-btn>
+        <q-btn class="navigate__btn navigate__right absolute bg-dark">
+          <q-icon size="45px" style="color: #ccc" name="arrow_forward_ios" />
+        </q-btn>
+      </div>
+      <q-btn round @click="toggleLeftDrawer" class="absolute start-btn bg-dark">
+        <q-icon size="120px" color="accent" name="fa-regular fa-circle-play" />
+        <!-- timerページでpropsを受け取る -->
+      </q-btn>
+      <q-tabs align="justify">
+        <q-route-tab name="home" to="/" icon="home" class="w-20pc" />
+        <q-route-tab
+          name="dailyJournal"
+          to="/dailyJournal"
+          icon="mdi-notebook"
+          class="w-20pc"
         />
-      </q-toolbar>
+        <q-tab disable class="w-20pc" />
+        <q-route-tab
+          name="summary"
+          to="/summary"
+          icon="mdi-poll"
+          class="w-20pc"
+        />
+        <q-route-tab
+          name="settings"
+          to="/settings"
+          icon="mdi-cog"
+          class="w-20pc"
+        />
+      </q-tabs>
     </q-footer>
   </q-layout>
 </template>
@@ -57,6 +81,13 @@ const essentialLinks: EssentialLinkProps[] = [
     link: 'https://awesome.quasar.dev',
   },
 ];
+
+const onNavBtn: { [key: string]: true } = {
+  'Monthly Summary': true,
+  'Weekly Summary': true,
+  'Daily Journal': true,
+  'Chart': true,
+};
 
 const leftDrawerOpen = ref(false);
 
