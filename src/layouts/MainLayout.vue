@@ -86,7 +86,7 @@ const onNavBtn: { [key: string]: true } = {
   'Monthly Summary': true,
   'Weekly Summary': true,
   'Daily Journal': true,
-  'Chart': true,
+  Chart: true,
 };
 
 const leftDrawerOpen = ref(false);
