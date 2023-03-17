@@ -1,9 +1,42 @@
 // app global css in SCSS form
 body {
   background-color: $dark;
-  color: #cccccc;
+  color: $baseWhite;
 }
 
 .bg-header {
   background-color: rgba(#2f3336, 0.75);
+}
+
+.start-btn {
+  top: -90px;
+  right: 0;
+  left: 0;
+  margin: auto;
+  width: 120px;
+}
+
+$btn-gutter: calc(100vw * 0.05);
+.navigate {
+  &__btn {
+    padding: 10px;
+    border: $baseWhite 5px solid;
+    border-radius: 10px;
+    top: -90px;
+    left: 0;
+    right: 0;
+    width: calc(100vw / 3 - 40px);
+  }
+  &__left {
+    left: $btn-gutter;
+    margin-right: auto;
+  }
+  &__right {
+    right: $btn-gutter;
+    margin-left: auto;
+  }
+}
+
+.w-20pc {
+  width: 20%;
 }
