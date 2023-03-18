@@ -9,11 +9,16 @@ body {
 }
 
 .start-btn {
-  top: -90px;
+  bottom: 20px;
   right: 0;
   left: 0;
   margin: auto;
   width: 120px;
+}
+
+.stop-btn {
+  position: fixed;
+  bottom: 20px;
 }
 
 $btn-gutter: calc(100vw * 0.05);
@@ -39,4 +44,12 @@ $btn-gutter: calc(100vw * 0.05);
 
 .w-20pc {
   width: 20%;
+}
+
+.q-dialog__backdrop {
+  backdrop-filter: blur(10px);
+}
+
+.fowardComtent {
+  z-index: 10000;
 }

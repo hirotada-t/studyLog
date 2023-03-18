@@ -9,12 +9,18 @@
     <p>Count: {{ todoCount }} / {{ meta.totalCount }}</p>
     <p>Active: {{ active ? 'yes' : 'no' }}</p>
     <p>Clicks on todos: {{ clickCount }}</p>
+    {{ store.doubleCount }}
+    <q-btn @click="store.increment" label="increment" />
+    {{ store.counter }}
   </div>
 </template>
 
 <script setup lang="ts">
+import { useCounterStore } from 'src/store/storeSample';
 import { computed, ref } from 'vue';
 import { Todo, Meta } from './models';
+
+const store = useCounterStore();
 
 interface Props {
   title: string;
