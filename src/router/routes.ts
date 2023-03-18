@@ -11,7 +11,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/HomePage.vue'),
       },
       {
-        name: 'Timer',
+        name: 'Start',
         path: 'timer',
         component: () => import('src/pages/TimerPage.vue'),
       },
@@ -43,12 +43,12 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Daily Journal',
         path: 'dailyJournal',
-        component: () => import('src/pages/HomePage.vue'),
+        component: () => import('src/pages/DailyJournal.vue'),
       },
       {
         name: 'Settings',
         path: 'settings',
-        component: () => import('src/pages/HomePage.vue'),
+        component: () => import('src/pages/StoreSample.vue'),
       },
     ],
   },
