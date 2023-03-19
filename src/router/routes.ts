@@ -11,7 +11,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/HomePage.vue'),
       },
       {
-        name: 'Start',
+        name: 'Timer',
         path: 'timer',
         component: () => import('src/pages/TimerPage.vue'),
       },
