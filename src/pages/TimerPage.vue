@@ -183,12 +183,13 @@
                         style="width: 100%; transform: translateX(0)"
                       >
                         <span class="q-mr-xs">Score :</span>
-                        <q-icon
-                          v-for="i in Math.floor(logOfWork.focusLevel)"
-                          :key="i"
-                          size="xs"
+                        <q-rating
+                          v-model="logOfWork.focusLevel"
+                          :max="4"
+                          size="1em"
                           color="accent"
-                          name="star_rate"
+                          icon="star_border"
+                          icon-selected="star"
                         />
                       </div>
                     </template>
