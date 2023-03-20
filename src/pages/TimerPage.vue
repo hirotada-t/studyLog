@@ -21,9 +21,9 @@
     >
       <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
     </q-btn>
-    <q-dialog v-model="dialog" full-width class="result-window">
+    <q-dialog v-model="dialog" full-width class="result-window q-pt-lg">
       <div
-        class="absolute z-top top-20px text-center text-h5"
+        class="absolute z-top q-mt-md text-center text-h5 top-0"
         style="height: 140px"
       >
         <p>Start : {{ formattedString }}</p>
@@ -31,7 +31,11 @@
           <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
         </div>
       </div>
-      <q-card class="bg-dark" flat style="border: 2px solid #888">
+      <q-card
+        class="bg-dark"
+        flat
+        style="border: 2px solid #888; margin-top: 140px"
+      >
         <q-card-section align="center">
           <q-btn
             v-if="dialog"
@@ -43,11 +47,17 @@
             color="primary"
           />
           <q-scroll-area
-            :thumb-style="thumbStyle"
+            :thumb-style="{
+              right: '2px',
+              borderRadius: '5px',
+              backgroundColor: '#cccccc',
+              width: '5px',
+              opacity: '0.4',
+            }"
             dark
             visible
-            class="q-pt-sm q-pr-md"
-            style="height: 55vh"
+            class="q-pt-sm"
+            style="height: 50vh"
           >
             <q-form class="q-gutter-y-md column">
               <q-input
@@ -198,14 +208,6 @@ const categoryList = ref<string[]>(['MySelf', 'Task']);
 const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);
 
-const thumbStyle = {
-  right: '2px',
-  borderRadius: '5px',
-  backgroundColor: '#cccccc',
-  width: '5px',
-  opacity: '0.4',
-};
-
 const startTimer = () => {
   timerOn.value = true;
   timerId.value = setInterval(() => {
@@ -242,6 +244,6 @@ startTimer();
 
 <style lang="scss">
 .result-window .q-dialog__inner {
-  align-items: end !important;
+  align-items: start !important;
 }
 </style>
