@@ -21,9 +21,9 @@
     >
       <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
     </q-btn>
-    <q-dialog v-model="dialog" full-width>
+    <q-dialog v-model="dialog" full-width class="result-window q-pt-lg">
       <div
-        class="absolute z-top top-20px text-center text-h5"
+        class="absolute z-top q-mt-md text-center text-h5 top-0"
         style="height: 140px"
       >
         <p>Start : {{ formattedString }}</p>
@@ -31,7 +31,11 @@
           <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
         </div>
       </div>
-      <q-card class="bg-dark" flat style="border: 2px solid #888">
+      <q-card
+        class="bg-dark"
+        flat
+        style="border: 2px solid #888; margin-top: 140px"
+      >
         <q-card-section align="center">
           <q-btn
             v-if="dialog"
@@ -43,51 +47,86 @@
             color="primary"
           />
           <q-scroll-area
-            :thumb-style="thumbStyle"
+            :thumb-style="{
+              right: '2px',
+              borderRadius: '5px',
+              backgroundColor: '#cccccc',
+              width: '5px',
+              opacity: '0.4',
+            }"
             dark
             visible
-            class="q-pt-sm q-pr-md"
-            style="height: 55vh"
+            class="q-pt-sm"
+            :class="Screen.height > 777 ? '' : 'q-pr-md'"
+            :style="
+              Screen.height > 777 ? { height: '450px' } : { height: '350px' }
+            "
           >
             <q-form class="q-gutter-y-md column">
               <q-input
                 dark
                 filled
-                bottom-slots
                 v-model="logOfWork.title"
                 label="Title"
                 counter
                 dense
-                :rules="[(val: string) => val.length <= 20 || 'Please use Maximum 20 characters']"
-              >
-                <template v-slot:hint>Maximum 20 characters</template>
-                <template v-slot:append>
-                  <q-icon
-                    name="close"
-                    @click="logOfWork.title = ''"
-                    class="cursor-pointer"
-                  />
-                </template>
-              </q-input>
-              <q-input
+                clearable
+                maxlength="20"
+              />
+              <q-select
+                clearable
                 label="Category"
                 dark
                 filled
-                bottom-slots
-                v-model="logOfWork.title"
-                counter
+                v-model="logOfWork.category"
+                :options="categoryList"
                 dense
-                :rules="[(val: string) => val.length <= 20 || 'Please use Maximum 20 characters']"
               >
-                <template v-slot:hint>Maximum 20 characters</template>
-                <template v-slot:append>
-                  <q-icon
-                    name="close"
-                    @click="logOfWork.title = ''"
-                    class="cursor-pointer"
-                  />
-                </template>
-              </q-input>
+              </q-select>
+              <q-btn
+                size="small"
+                flat
+                dense
+                class="q-mt-none q-py-none"
+                label="add new category"
+                icon="add"
+                @click="addNewCat = true"
+              >
+                <q-dialog v-model="addNewCat">
+                  <q-card class="bg-dark" flat>
+                    <q-card-section align="center">
+                      <q-input
+                        v-model="newCat"
+                        label="new category"
+                        dark
+                        filled
+                        dense
+                        clearable
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        @click="addNewCat = false"
+                        flat
+                        label="cancel"
+                        color="primary"
+                      />
+                      <q-btn
+                        @click="
+                          categoryList.push(newCat);
+                          addNewCat = false;
+                          newCat = '';
+                        "
+                        :disable="newCat === ''"
+                        flat
+                        label="OK"
+                        color="dark"
+                        class="bg-primary text-bold"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+              </q-btn>
               <q-select
                 label="Tags"
                 dark
@@ -98,16 +137,65 @@
                 multiple
                 dense
                 hide-dropdown-icon
-                input-debounce="0"
-                @new-value="createValue"
+                new-value-mode="add-unique"
               />
-              <q-input
-                label="Level of Focus"
-                dark
-                v-model="logOfWork.title"
-                dense
-              >
-              </q-input>
+              <p class="text-left q-mb-none">Level of Focus</p>
+              <q-item class="q-mt-none q-pa-none">
+                <q-item-section side class="align-end">
+                  <q-icon
+                    @click="
+                      logOfWork.focusLevel < 2 ? 1 : logOfWork.focusLevel--
+                    "
+                    name="remove"
+                    size="xs"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-slider
+                    v-model="logOfWork.focusLevel"
+                    color="accent"
+                    thumb-color="grey-4"
+                    snap
+                    dark
+                    :min="1"
+                    :max="4"
+                    :step="1"
+                    marker-labels
+                    label-always
+                    :label-value="faceOfFocus[logOfWork.focusLevel - 1]"
+                    :switch-label-side="logOfWork.focusLevel === 1"
+                    track-size="10px"
+                    thumb-size="25px"
+                    markers
+                  >
+                    <template v-slot:marker-label-group="{ markerMap }">
+                      <div
+                        class="row items-center no-wrap justify-center"
+                        :class="markerMap[logOfWork.focusLevel].classes"
+                        style="width: 100%; transform: translateX(0)"
+                      >
+                        <span class="q-mr-xs">Score :</span>
+                        <q-icon
+                          v-for="i in Math.floor(logOfWork.focusLevel)"
+                          :key="i"
+                          size="xs"
+                          color="accent"
+                          name="star_rate"
+                        />
+                      </div>
+                    </template>
+                  </q-slider>
+                </q-item-section>
+                <q-item-section side>
+                  <q-icon
+                    @click="
+                      logOfWork.focusLevel > 3 ? 4 : logOfWork.focusLevel++
+                    "
+                    name="add"
+                    size="xs"
+                  />
+                </q-item-section>
+              </q-item>
               <q-input
                 label="Study contents"
                 dark
@@ -142,13 +230,13 @@
 
 <script setup lang="ts">
 // import { useLogStore } from 'src/store/logStore';
-import { date } from 'quasar';
+import { date, Screen } from 'quasar';
 import { Log } from 'src/types/util.interface';
 import { ref } from 'vue';
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(timeStamp, 'MM/DD HH:mm');
-
+const faceOfFocus = ['😣', '😑', '🙂', '😆'];
 // const store = useLogStore();
 const currentTimer = ref<number>(0);
 const timerOn = ref<boolean>(true);
@@ -166,17 +254,12 @@ const logOfWork = ref<Log>({
   title: '',
   category: '',
   tags: [],
-  focusLevel: 0,
+  focusLevel: 3,
   studyContents: '',
 });
-
-const thumbStyle = {
-  right: '2px',
-  borderRadius: '5px',
-  backgroundColor: '#cccccc',
-  width: '5px',
-  opacity: '0.4',
-};
+const categoryList = ref<string[]>(['MySelf', 'Task']);
+const newCat = ref<string>('');
+const addNewCat = ref<boolean>(false);
 
 const startTimer = () => {
   timerOn.value = true;
@@ -208,29 +291,12 @@ const restartTimer = () => {
   dialog.value = false;
   startTimer();
 };
-const createValue = (
-  val: string,
-  done: (
-    item?: string,
-    mode?: 'add-unique' | 'add' | 'toggle' | undefined
-  ) => void
-) => {
-  done(val, 'add-unique');
-};
-
-// (property) "new-value":
-//  (
-//   (
-//     inputValue: string,
-//     doneFn: (item?: any, mode?: "add-unique" | "add" | "toggle" | undefined) => void
-//   ) => void
-// ) | undefined
 
 startTimer();
 </script>
 
 <style lang="scss">
-.q-dialog__inner {
-  align-items: end !important;
+.result-window .q-dialog__inner {
+  align-items: start !important;
 }
 </style>
