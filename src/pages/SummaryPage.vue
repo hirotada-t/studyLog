@@ -1,31 +1,31 @@
 <template>
-  <q-page>
-    <div class="row">
-      <div class="col-12">
-        <router-link to="/summary/chart">
-          <q-card>
-            <q-img src="/img/chart-img.png">
-              <div class="absolute-bottom text-subtitle2 text-center">Chart</div>
-            </q-img>
-          </q-card>
-        </router-link>
-      </div>
+  <q-page class="column no-wrap justify-center">
+    <div class="q-px-md q-mb-md">
+      <router-link to="/summary/chart">
+        <q-card class="bg-dark" style="border-radius: 20px">
+          <q-img src="/img/chart-img.png">
+            <div class="absolute-top text-h5 text-left">Record of effort</div>
+          </q-img>
+        </q-card>
+      </router-link>
     </div>
-    <div class="row">
-      <div class="col-6">
+    <div class="row q-px-md">
+      <div class="col-6 q-pr-sm">
         <router-link to="/summary/monthly">
-          <q-card>
+          <q-card class="bg333" style="border-radius: 15px">
             <q-img src="/img/monthly-summary.png">
-              <div class="absolute-bottom text-subtitle2 text-center">Monthly Summary</div>
+              <div class="absolute-top text-h5 text-center bg333">
+                Monthly Summary
+              </div>
             </q-img>
           </q-card>
         </router-link>
       </div>
-      <div class="col-6">
+      <div class="col-6 q-pl-sm">
         <router-link to="/summary/monthly">
-          <q-card>
+          <q-card class="bg333" style="border-radius: 15px">
             <q-img src="/img/weekly-summary.png">
-              <div class="absolute-bottom text-subtitle2 text-center">Weekly Summary</div>
+              <div class="text-h5 text-center bg333">Weekly Summary</div>
             </q-img>
           </q-card>
         </router-link>
