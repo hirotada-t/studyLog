@@ -72,7 +72,11 @@
                 dense
                 clearable
                 maxlength="20"
-              />
+              >
+                <template v-slot:prepend>
+                  <q-icon name="edit" size="small" />
+                </template>
+              </q-input>
               <q-select
                 clearable
                 label="Category"
@@ -138,7 +142,11 @@
                 dense
                 hide-dropdown-icon
                 new-value-mode="add-unique"
-              />
+              >
+                <template v-slot:prepend>
+                  <q-icon name="local_offer" size="small" />
+                </template>
+              </q-select>
               <p class="text-left q-mb-none">Level of Focus</p>
               <q-item class="q-mt-none q-pa-none">
                 <q-item-section side class="align-end">
