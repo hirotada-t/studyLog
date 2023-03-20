@@ -72,7 +72,11 @@
                 dense
                 clearable
                 maxlength="20"
-              />
+              >
+                <template v-slot:prepend>
+                  <q-icon name="edit" size="small" />
+                </template>
+              </q-input>
               <q-select
                 clearable
                 label="Category"
@@ -138,7 +142,11 @@
                 dense
                 hide-dropdown-icon
                 new-value-mode="add-unique"
-              />
+              >
+                <template v-slot:prepend>
+                  <q-icon name="local_offer" size="small" />
+                </template>
+              </q-select>
               <p class="text-left q-mb-none">Level of Focus</p>
               <q-item class="q-mt-none q-pa-none">
                 <q-item-section side class="align-end">
@@ -175,12 +183,13 @@
                         style="width: 100%; transform: translateX(0)"
                       >
                         <span class="q-mr-xs">Score :</span>
-                        <q-icon
-                          v-for="i in Math.floor(logOfWork.focusLevel)"
-                          :key="i"
-                          size="xs"
+                        <q-rating
+                          v-model="logOfWork.focusLevel"
+                          :max="4"
+                          size="1em"
                           color="accent"
-                          name="star_rate"
+                          icon="star_border"
+                          icon-selected="star"
                         />
                       </div>
                     </template>

@@ -19,7 +19,7 @@
       >
         <q-icon size="120px" color="accent" name="fa-regular fa-circle-play" />
       </q-btn>
-      <q-tabs align="justify">
+      <q-tabs align="justify" indicator-color="transparent">
         <q-route-tab name="home" to="/" icon="home" class="w-20pc" />
         <q-route-tab
           name="dailyJournal"
