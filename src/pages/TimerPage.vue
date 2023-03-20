@@ -57,7 +57,7 @@
             dark
             visible
             class="q-pt-sm"
-            style="height: 50vh"
+            style="height: 430px"
           >
             <q-form class="q-gutter-y-md column">
               <q-input
@@ -136,13 +136,63 @@
                 hide-dropdown-icon
                 new-value-mode="add-unique"
               />
-              <q-input
-                label="Level of Focus"
-                dark
-                v-model="logOfWork.title"
-                dense
-              >
-              </q-input>
+              <p class="text-left q-mb-none">Level of Focus</p>
+              <q-item class="q-mt-none q-pa-none">
+                <q-item-section side class="align-end">
+                  <q-icon
+                    @click="
+                      logOfWork.focusLevel < 2 ? 1 : logOfWork.focusLevel--
+                    "
+                    name="remove"
+                    size="xs"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-slider
+                    v-model="logOfWork.focusLevel"
+                    color="accent"
+                    thumb-color="grey-4"
+                    snap
+                    dark
+                    :min="1"
+                    :max="4"
+                    :step="1"
+                    marker-labels
+                    label-always
+                    :label-value="faceOfFocus[logOfWork.focusLevel - 1]"
+                    :switch-label-side="logOfWork.focusLevel === 1"
+                    track-size="10px"
+                    thumb-size="25px"
+                    markers
+                  >
+                    <template v-slot:marker-label-group="{ markerMap }">
+                      <div
+                        class="row items-center no-wrap justify-center"
+                        :class="markerMap[logOfWork.focusLevel].classes"
+                        style="width: 100%; transform: translateX(0)"
+                      >
+                        <span class="q-mr-xs">Score :</span>
+                        <q-icon
+                          v-for="i in Math.floor(logOfWork.focusLevel)"
+                          :key="i"
+                          size="xs"
+                          color="accent"
+                          name="star_rate"
+                        />
+                      </div>
+                    </template>
+                  </q-slider>
+                </q-item-section>
+                <q-item-section side>
+                  <q-icon
+                    @click="
+                      logOfWork.focusLevel > 3 ? 4 : logOfWork.focusLevel++
+                    "
+                    name="add"
+                    size="xs"
+                  />
+                </q-item-section>
+              </q-item>
               <q-input
                 label="Study contents"
                 dark
@@ -183,7 +233,7 @@ import { ref } from 'vue';
 
 const timeStamp = Date.now();
 const formattedString = date.formatDate(timeStamp, 'MM/DD HH:mm');
-
+const faceOfFocus = ['😣', '😑', '🙂', '😆'];
 // const store = useLogStore();
 const currentTimer = ref<number>(0);
 const timerOn = ref<boolean>(true);
@@ -201,7 +251,7 @@ const logOfWork = ref<Log>({
   title: '',
   category: '',
   tags: [],
-  focusLevel: 0,
+  focusLevel: 3,
   studyContents: '',
 });
 const categoryList = ref<string[]>(['MySelf', 'Task']);
