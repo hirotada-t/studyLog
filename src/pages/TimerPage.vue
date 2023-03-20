@@ -57,7 +57,10 @@
             dark
             visible
             class="q-pt-sm"
-            style="height: 430px"
+            :class="Screen.height > 777 ? '' : 'q-pr-md'"
+            :style="
+              Screen.height > 777 ? { height: '450px' } : { height: '350px' }
+            "
           >
             <q-form class="q-gutter-y-md column">
               <q-input
@@ -227,7 +230,7 @@
 
 <script setup lang="ts">
 // import { useLogStore } from 'src/store/logStore';
-import { date } from 'quasar';
+import { date, Screen } from 'quasar';
 import { Log } from 'src/types/util.interface';
 import { ref } from 'vue';
 
