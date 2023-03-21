@@ -235,6 +235,7 @@
 <script setup lang="ts">
 import { useLogStore } from 'src/store/logStore';
 import { date, Screen } from 'quasar';
+import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 
@@ -266,10 +267,11 @@ const logOfWork = ref<DailyLog>({
 });
 
 const displayTimer = () => {
-
   const currentTime = new Date(Date.now() - startTime.value + stopTime.value);
   timerId.value = setTimeout(() => {
-    hour.value = Number(date.formatDate(currentTime, 'hh')) + new Date().getTimezoneOffset() / 60;
+    hour.value =
+      Number(date.formatDate(currentTime, 'hh')) +
+      new Date().getTimezoneOffset() / 60;
     min.value = date.formatDate(currentTime, 'mm');
     sec.value = date.formatDate(currentTime, 'ss');
     time.value = hour.value + ':' + min.value + ':' + sec.value;
@@ -287,11 +289,11 @@ const startTimer = () => {
 };
 const pauseTimer = () => {
   clearInterval(timerId.value);
-  dialog.value = true;
-  stopTime.value += (Date.now() - startTime.value);
+  stopTime.value += Date.now() - startTime.value;
 };
 const stopTimer = () => {
   pauseTimer();
+  dialog.value = true;
   logOfWork.value.closeTime = 0;
 };
 const restartTimer = () => {
@@ -300,6 +302,19 @@ const restartTimer = () => {
 };
 
 startTimer();
+
+onBeforeRouteLeave((to, from) => {
+  if (from.name === 'Timer') {
+    pauseTimer();
+    const answer = window.confirm(
+      'Do you really want to leave? The timer is cancelled.'
+    );
+    if (!answer) {
+      startTimer();
+      return false;
+    }
+  }
+});
 </script>
 
 <style lang="scss">
