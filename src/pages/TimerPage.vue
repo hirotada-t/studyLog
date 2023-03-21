@@ -249,16 +249,17 @@ const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);
 
 const timerId = ref<NodeJS.Timeout>();
-const startTime = ref(Date.now());
-const formattedTime: string = date.formatDate(startTime.value, 'hh:mm');
+const startTime = ref<number>(Date.now());
 const stopTime = ref<number>(0);
+const accumulatedTime = ref<number>(0);
+const formattedTime: string = date.formatDate(startTime.value, 'hh:mm');
 const hour = ref<number>(0);
 const min = ref<string>('00');
 const sec = ref<string>('00');
 const time = ref<string>('0:00:00');
 const logOfWork = ref<DailyLog>({
   startTime: Date.now(),
-  closeTime: 0,
+  studyTime: 0,
   title: '',
   category: '',
   tags: [],
@@ -267,7 +268,8 @@ const logOfWork = ref<DailyLog>({
 });
 
 const displayTimer = () => {
-  const currentTime = new Date(Date.now() - startTime.value + stopTime.value);
+  accumulatedTime.value = Date.now() - startTime.value + stopTime.value;
+  const currentTime = new Date(accumulatedTime.value);
   timerId.value = setTimeout(() => {
     hour.value =
       Number(date.formatDate(currentTime, 'hh')) +
@@ -294,7 +296,7 @@ const pauseTimer = () => {
 const stopTimer = () => {
   pauseTimer();
   dialog.value = true;
-  logOfWork.value.closeTime = 0;
+  logOfWork.value.studyTime = accumulatedTime.value;
 };
 const restartTimer = () => {
   dialog.value = false;
@@ -304,7 +306,7 @@ const restartTimer = () => {
 startTimer();
 
 onBeforeRouteLeave((to, from) => {
-  if (from.name === 'Timer') {
+  if (!dialog.value && from.name === 'Timer') {
     pauseTimer();
     const answer = window.confirm(
       'Do you really want to leave? The timer is cancelled.'
