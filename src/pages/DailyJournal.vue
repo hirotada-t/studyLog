@@ -58,7 +58,7 @@
           flat
           v-for="(d, index) of days"
           :key="index"
-          style="padding: 0 .5vw; width: 12%;"
+          style="padding: 0 0.5vw; width: 12%"
           padding="none"
         >
           <q-knob

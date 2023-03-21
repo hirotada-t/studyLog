@@ -29,7 +29,8 @@ export const useLogStore = defineStore('log', {
     setLog(value: DailyLog) {
       console.log(value);
       console.log(this.getLog);
-      if (value.title === '') value.title = date.formatDate(value.startTime, 'MM/DD HH:mm ~');
+      if (value.title === '')
+        value.title = date.formatDate(value.startTime, 'MM/DD HH:mm ~');
       const key = this.today;
       if (!this.logList[key]) this.logList[key] = [];
       this.logList[key].push(value);
