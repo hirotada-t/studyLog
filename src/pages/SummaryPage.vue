@@ -1,6 +1,6 @@
 <template>
   <q-page class="column no-wrap justify-center">
-    <div class="q-px-md q-mb-md">
+    <div class="q-mb-md">
       <router-link to="/summary/chart">
         <q-card class="bg-dark" style="border-radius: 20px">
           <q-img src="/img/chart-img.png">
@@ -9,7 +9,7 @@
         </q-card>
       </router-link>
     </div>
-    <div class="row q-px-md">
+    <div class="row">
       <div class="col-6 q-pr-sm">
         <router-link to="/summary/monthly">
           <q-card class="bg333" style="border-radius: 15px">

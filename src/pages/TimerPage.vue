@@ -1,32 +1,26 @@
 <template>
   <q-page class="row justify-evenly">
     <div class="fixed text-center q-mt-lg text-h5">
-      <p>Start : {{ formattedString }}</p>
+      <p>Start : {{ store.today }} {{ formattedTime }}</p>
       <div class="">
         <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
       </div>
     </div>
     <div style="margin-top: 170px">comment</div>
-    <!-- <q-btn v-if="!timerOn" round @click="startTimer" class="bg-dark">
-      <q-icon size="120px" color="accent" name="fa-regular fa-circle-play" />
-    </q-btn>
-    <q-btn v-if="timerOn" round @click="pauseTimer" class="bg-dark">
-      <q-icon size="120px" color="positive" name="fa-regular fa-circle-pause" />
-    </q-btn> -->
     <q-btn
       round
       @click="stopTimer"
       class="absolute stop-btn bg-dark"
       style="z-index: 10"
     >
-      <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
+      <q-icon size="120px" color="positive" name="fa-regular fa-circle-pause" />
     </q-btn>
     <q-dialog v-model="dialog" full-width class="result-window q-pt-lg">
       <div
         class="absolute z-top q-mt-md text-center text-h5 top-0"
         style="height: 140px"
       >
-        <p>Start : {{ formattedString }}</p>
+        <p>Start : {{ store.today }}</p>
         <div class="">
           <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
         </div>
@@ -225,6 +219,7 @@
             color="primary"
           />
           <q-btn
+            @click="store.setLog(logOfWork)"
             to="/"
             flat
             label="finish"
@@ -238,63 +233,70 @@
 </template>
 
 <script setup lang="ts">
-// import { useLogStore } from 'src/store/logStore';
+import { useLogStore } from 'src/store/logStore';
 import { date, Screen } from 'quasar';
-import { Log } from 'src/types/util.interface';
+import { onBeforeRouteLeave } from 'vue-router';
+import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 
-const timeStamp = Date.now();
-const formattedString = date.formatDate(timeStamp, 'MM/DD HH:mm');
+const store = useLogStore();
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
-// const store = useLogStore();
-const currentTimer = ref<number>(0);
-const timerOn = ref<boolean>(true);
+
+const shareUrl = ref<string>('');
 const dialog = ref<boolean>(false);
+const categoryList = ref<string[]>(['MySelf', 'Task']);
+const newCat = ref<string>('');
+const addNewCat = ref<boolean>(false);
+
 const timerId = ref<NodeJS.Timeout>();
+const startTime = ref<number>(Date.now());
+const stopTime = ref<number>(0);
+const accumulatedTime = ref<number>(0);
+const formattedTime: string = date.formatDate(startTime.value, 'hh:mm');
 const hour = ref<number>(0);
 const min = ref<string>('00');
 const sec = ref<string>('00');
 const time = ref<string>('0:00:00');
-const shareUrl = ref<string>('');
-const logOfWork = ref<Log>({
-  date: '',
-  startTime: '',
-  studyTime: '',
+const logOfWork = ref<DailyLog>({
+  startTime: Date.now(),
+  studyTime: 0,
   title: '',
   category: '',
   tags: [],
   focusLevel: 3,
   studyContents: '',
 });
-const categoryList = ref<string[]>(['MySelf', 'Task']);
-const newCat = ref<string>('');
-const addNewCat = ref<boolean>(false);
 
-const startTimer = () => {
-  timerOn.value = true;
-  timerId.value = setInterval(() => {
-    const m = Math.floor(currentTimer.value / 60);
-    const s = Math.floor(currentTimer.value % 60);
-    hour.value = Math.floor(currentTimer.value / 3600);
-    min.value = m < 10 ? '0' + m : '' + m;
-    sec.value = s < 10 ? '0' + s : '' + s;
+const displayTimer = () => {
+  accumulatedTime.value = Date.now() - startTime.value + stopTime.value;
+  const currentTime = new Date(accumulatedTime.value);
+  timerId.value = setTimeout(() => {
+    hour.value =
+      Number(date.formatDate(currentTime, 'hh')) +
+      new Date().getTimezoneOffset() / 60;
+    min.value = date.formatDate(currentTime, 'mm');
+    sec.value = date.formatDate(currentTime, 'ss');
     time.value = hour.value + ':' + min.value + ':' + sec.value;
     shareUrl.value =
       'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
       time.value +
       '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
-
-    currentTimer.value++;
-  }, 1000);
+    displayTimer();
+  }, 250);
+};
+const startTimer = () => {
+  dialog.value = false;
+  startTime.value = Date.now();
+  displayTimer();
 };
 const pauseTimer = () => {
-  timerOn.value = false;
-  dialog.value = true;
   clearInterval(timerId.value);
+  stopTime.value += Date.now() - startTime.value;
 };
 const stopTimer = () => {
   pauseTimer();
-  timerOn.value = true;
+  dialog.value = true;
+  logOfWork.value.studyTime = accumulatedTime.value;
 };
 const restartTimer = () => {
   dialog.value = false;
@@ -302,6 +304,19 @@ const restartTimer = () => {
 };
 
 startTimer();
+
+onBeforeRouteLeave((to, from) => {
+  if (!dialog.value && from.name === 'Timer') {
+    pauseTimer();
+    const answer = window.confirm(
+      'Do you really want to leave? The timer is cancelled.'
+    );
+    if (!answer) {
+      startTimer();
+      return false;
+    }
+  }
+});
 </script>
 
 <style lang="scss">
