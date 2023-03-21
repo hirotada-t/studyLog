@@ -1,7 +1,6 @@
-export type Log = {
-  date: string;
-  startTime: string;
-  studyTime: string;
+export type DailyLog = {
+  startTime: number;
+  closeTime: number;
   title: string;
   category: string | null;
   tags: string[];

@@ -1,18 +1,37 @@
 import { defineStore } from 'pinia';
-import { Log } from 'src/types/util.interface';
+import { date } from 'quasar';
+import { DailyLog } from 'src/types/util.interface';
+
+const timeStamp = Date.now();
 
 type State = {
-  log: Log[];
+  logList: {
+    [date: string]: DailyLog[];
+  };
+  today: string;
 };
 
-export const useLogStore = defineStore('counter', {
+export const useLogStore = defineStore('log', {
   state: (): State => ({
-    log: [],
+    logList: {},
+    today: date.formatDate(timeStamp, 'MM/DD'),
   }),
-  getters: {},
+  getters: {
+    getLog: (state) => state.logList,
+    getDailyHours: (state) => {
+      const hours = 0;
+      const target = state.logList[state.today];
+      for (let i = 0; i < target.length; i++) {}
+      return hours;
+    },
+  },
   actions: {
-    setLog(value: Log) {
-      this.log.push(value);
+    setLog(value: DailyLog) {
+      console.log(value);
+      console.log(this.getLog);
+      const key = this.today;
+      if (!this.logList[key]) this.logList[key] = [];
+      this.logList[key].push(value);
     },
   },
 });
