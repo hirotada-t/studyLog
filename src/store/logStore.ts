@@ -9,6 +9,7 @@ type State = {
     [date: string]: DailyLog[];
   };
   today: string;
+  weeklyTarget: number;
 };
 
 export const useLogStore = defineStore('log', {
@@ -36,9 +37,12 @@ export const useLogStore = defineStore('log', {
       ],
     },
     today: date.formatDate(timeStamp, 'MM/DD'),
+    weeklyTarget: 3600000 * 4,
   }),
   getters: {
-    get:() => {console.log()},
+    get: () => {
+      console.log();
+    },
     getAdayTotalHours: (state) => {
       return (date: string) => {
         const arr = state.weeklyLogList[date];
@@ -61,8 +65,9 @@ export const useLogStore = defineStore('log', {
   actions: {
     setLog(value: DailyLog) {
       console.log(value);
-      if (value.title === '')
+      if (value.title === '') {
         value.title = date.formatDate(value.startMS, 'MM/DD HH:mm ~');
+      }
       const key = this.today;
       if (!this.weeklyLogList[key]) this.weeklyLogList[key] = [];
       this.weeklyLogList[key].push(value);

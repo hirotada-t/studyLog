@@ -19,9 +19,9 @@
         </q-knob>
       </div>
       <div class="col-4 text-center">
-        <h3 class="q-my-none text-h5">{{dailyTotalHoursMS}}</h3>
+        <h3 class="q-my-none text-h5">{{ timeFromMS(dailyTotalHoursMS) }}</h3>
         <p>Daily total</p>
-        <h3 class="q-my-none text-h5">04:37</h3>
+        <h3 class="q-my-none text-h5">{{ timeFromMS(store.weeklyTarget) }}</h3>
         <p class="q-my-none">Weekly ave.</p>
       </div>
       <div class="col-2">
@@ -77,6 +77,7 @@
           </q-knob>
         </q-btn>
         <q-btn
+          :ripple="false"
           to="/summary/weekly"
           round
           style="padding: 0 0.5vw"
@@ -93,6 +94,7 @@
 <script setup lang="ts">
 import { date } from 'quasar';
 import { useLogStore } from 'src/store/logStore';
+import { timeFromMS } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
 const timeStamp = Date.now();
@@ -109,6 +111,7 @@ const dailyTotalHoursMS = ref<number>(store.getAdayTotalHours(store.today));
 const rateOfAchievement = ref<number>(0);
 
 onMounted(() => {
-  rateOfAchievement.value = 80;
+  rateOfAchievement.value =
+    (dailyTotalHoursMS.value * 100) / store.weeklyTarget;
 });
 </script>
