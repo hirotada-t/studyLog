@@ -1,6 +1,6 @@
 export type DailyLog = {
   startMS: number;
-  studyTime: number;
+  studyMS: number;
   title: string;
   category: string | null;
   tagList: string[];

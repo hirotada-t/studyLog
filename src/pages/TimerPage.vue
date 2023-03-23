@@ -238,6 +238,7 @@ import { date, Screen } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
+import { timeCounterFromMS } from 'src/utils/func';
 
 const store = useLogStore();
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
@@ -253,13 +254,10 @@ const startTime = ref<number>(Date.now());
 const stopTime = ref<number>(0);
 const formattedTime: string = date.formatDate(startTime.value, 'HH:mm');
 const diff = ref<number>(0);
-const hour = ref<number>(0);
-const min = ref<number>(0);
-const sec = ref<number>(0);
 const time = ref<string>('0:00:00');
 const logOfWork = ref<DailyLog>({
   startMS: Date.now(),
-  studyTime: 0,
+  studyMS: 0,
   title: '',
   category: '',
   tagList: [],
@@ -271,14 +269,7 @@ const displayTimer = () => {
   timerId.value = window.setTimeout(() => {
     diff.value = Date.now() - startTime.value + stopTime.value;
 
-    sec.value = Math.floor(diff.value / 1000);
-    min.value = Math.floor(sec.value / 60);
-    hour.value = Math.floor(min.value / 60);
-
-    time.value = hour.value + ':';
-    time.value += min.value % 60 < 10 ? '0' + min.value % 60 : min.value % 60;
-    time.value += ':' + (sec.value % 60 < 10 ? '0' + sec.value % 60 : sec.value % 60);
-
+    time.value = timeCounterFromMS(diff.value);
     shareUrl.value =
       'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
       time.value +
@@ -298,7 +289,7 @@ const pauseTimer = () => {
 const stopTimer = () => {
   pauseTimer();
   dialog.value = true;
-  logOfWork.value.studyTime = diff.value;
+  logOfWork.value.studyMS = diff.value;
 };
 const restartTimer = () => {
   dialog.value = false;
