@@ -1,9 +1,9 @@
 export type DailyLog = {
-  startTime: number;
+  startMS: number;
   studyTime: number;
   title: string;
   category: string | null;
-  tags: string[];
+  tagList: string[];
   focusLevel: number;
   studyContents: string;
 };

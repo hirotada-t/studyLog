@@ -21,7 +21,9 @@ export const useLogStore = defineStore('log', {
     getDailyHours: (state) => {
       const hours = 0;
       const target = state.logList[state.today];
-      for (let i = 0; i < target.length; i++) {}
+      for (let i = 0; i < target.length; i++) {
+        console.log()
+      }
       return hours;
     },
   },
@@ -30,7 +32,7 @@ export const useLogStore = defineStore('log', {
       console.log(value);
       console.log(this.getLog);
       if (value.title === '')
-        value.title = date.formatDate(value.startTime, 'MM/DD HH:mm ~');
+        value.title = date.formatDate(value.startMS, 'MM/DD HH:mm ~');
       const key = this.today;
       if (!this.logList[key]) this.logList[key] = [];
       this.logList[key].push(value);
