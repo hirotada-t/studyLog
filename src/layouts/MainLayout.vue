@@ -54,16 +54,4 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onBeforeRouteLeave } from 'vue-router';
-
-onBeforeRouteLeave((to, from) => {
-  const answer = window.confirm(
-    'Do you really want to leave? you have unsaved changes!'
-  );
-  // cancel the navigation and stay on the same page
-  if (!answer) return false;
-  console.log(to);
-  console.log(from);
-});
-</script>
+<script setup lang="ts"></script>

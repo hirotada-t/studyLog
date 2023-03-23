@@ -129,7 +129,7 @@
                 label="Tags"
                 dark
                 filled
-                v-model="logOfWork.tags"
+                v-model="logOfWork.tagList"
                 use-input
                 use-chips
                 multiple
@@ -238,6 +238,7 @@ import { date, Screen } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
+import { timeCounterFromMS } from 'src/utils/func';
 
 const store = useLogStore();
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
@@ -248,35 +249,27 @@ const categoryList = ref<string[]>(['MySelf', 'Task']);
 const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);
 
-const timerId = ref<NodeJS.Timeout>();
+const timerId = ref<number>();
 const startTime = ref<number>(Date.now());
 const stopTime = ref<number>(0);
-const accumulatedTime = ref<number>(0);
-const formattedTime: string = date.formatDate(startTime.value, 'hh:mm');
-const hour = ref<number>(0);
-const min = ref<string>('00');
-const sec = ref<string>('00');
+const formattedTime: string = date.formatDate(startTime.value, 'HH:mm');
+const diff = ref<number>(0);
 const time = ref<string>('0:00:00');
 const logOfWork = ref<DailyLog>({
-  startTime: Date.now(),
-  studyTime: 0,
+  startMS: Date.now(),
+  studyMS: 0,
   title: '',
   category: '',
-  tags: [],
+  tagList: [],
   focusLevel: 3,
   studyContents: '',
 });
 
 const displayTimer = () => {
-  accumulatedTime.value = Date.now() - startTime.value + stopTime.value;
-  const currentTime = new Date(accumulatedTime.value);
-  timerId.value = setTimeout(() => {
-    hour.value =
-      Number(date.formatDate(currentTime, 'hh')) +
-      new Date().getTimezoneOffset() / 60;
-    min.value = date.formatDate(currentTime, 'mm');
-    sec.value = date.formatDate(currentTime, 'ss');
-    time.value = hour.value + ':' + min.value + ':' + sec.value;
+  timerId.value = window.setTimeout(() => {
+    diff.value = Date.now() - startTime.value + stopTime.value;
+
+    time.value = timeCounterFromMS(diff.value);
     shareUrl.value =
       'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
       time.value +
@@ -296,7 +289,7 @@ const pauseTimer = () => {
 const stopTimer = () => {
   pauseTimer();
   dialog.value = true;
-  logOfWork.value.studyTime = accumulatedTime.value;
+  logOfWork.value.studyMS = diff.value;
 };
 const restartTimer = () => {
   dialog.value = false;
