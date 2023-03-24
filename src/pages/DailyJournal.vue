@@ -36,7 +36,8 @@
     <div class="" ref="workList">
       <q-list dark separator>
         <q-item
-          v-for="item of store.weeklyLogList[store.today]"
+          v-for="item of store.weeklyLogList.get(store.today)
+          "
           :key="item.startMS"
           clickable
         >
@@ -100,6 +101,7 @@
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
 import { useLogStore } from 'src/store/logStore';
+import { DailyLog } from 'src/types/util.interface';
 import { timeFromMS } from 'src/utils/func';
 import { ref, onMounted, watch } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
@@ -122,17 +124,23 @@ const workList = ref();
 const weeklyData = ref();
 const adoveItemsHeight = 50 + 140;
 const visibleArea = Screen.height - adoveItemsHeight;
+const todayLog = ref<DailyLog[] | undefined>(
+  store.weeklyLogList.get(store.today)
+);
 
 watch(
-  () => store.weeklyLogList[store.today].length,
+  () => {
+    if (todayLog.value) return todayLog.value.length;
+    else return 0;
+  },
   (newItem) => {
     const belowContentHeight =
       dailyData.value.clientHeight +
-      newItem * 48 +
+      (newItem + 1) * 48 +
       weeklyData.value.clientHeight;
-    if (belowContentHeight > visibleArea) {
+    if (belowContentHeight > visibleArea + 48) {
       doc.value?.classList.add('adjust-page');
-    } else if (belowContentHeight > visibleArea - 48) {
+    } else if (belowContentHeight > visibleArea) {
       doc.value?.classList.add('adjust-page-3lists');
     }
   }
