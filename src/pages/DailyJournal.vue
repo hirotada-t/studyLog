@@ -18,6 +18,7 @@
           >
             {{ rateOfAchievement }}%
           </q-knob>
+          <p class="q-mb-none">DailyTotal/YourTarget</p>
         </div>
         <div class="col-4 text-center">
           <h3 class="q-my-none text-h5">{{ timeFromMS(dailyTotalHoursMS) }}</h3>
@@ -70,8 +71,8 @@
             <q-knob
               readonly
               show-value
-              :max="rateOfAchievement < 100 ? 100 : rateOfAchievement"
-              v-model="rateOfAchievement"
+              :max="racordMap[index] < 100 ? 100 : racordMap[index]"
+              v-model="racordMap[index]"
               size="10vw"
               font-size="15px"
               :thickness="0.17"
@@ -126,6 +127,25 @@ const visibleArea = Screen.height - adoveItemsHeight;
 const todayLog = ref<DailyLog[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
+const recordThisWeek = (): number[] => {
+  const arr: number[] = [];
+  const logMap = store.weeklyLogList;
+  const obj: { [key: string]: number } = {};
+
+  logMap.forEach((value, key) => {
+    const dMS = new Date(key).getTime();
+    const dd = date.formatDate(dMS, 'dd');
+    const rate = (store.getAdayTotalHours(key) * 100) / store.weeklyTarget;
+    obj[dd] = rate;
+  });
+
+  for (let i = 0; i < days.length; i++) {
+    const params = obj[days[i]] ? obj[days[i]] : 0;
+    arr[i] = params;
+  }
+  return arr;
+};
+const racordMap = ref<number[]>(recordThisWeek());
 
 watch(
   () => {
