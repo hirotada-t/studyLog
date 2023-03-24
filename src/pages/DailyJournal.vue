@@ -36,8 +36,7 @@
     <div class="" ref="workList">
       <q-list dark separator>
         <q-item
-          v-for="item of store.weeklyLogList.get(store.today)
-          "
+          v-for="item of store.weeklyLogList.get(store.today)"
           :key="item.startMS"
           clickable
         >
