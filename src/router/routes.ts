@@ -46,6 +46,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/DailyJournal.vue'),
       },
       {
+        path: 'dailyJournal/:id',
+        component: () => import('src/pages/DailyJournal.vue'),
+      },
+      {
         name: 'Settings',
         path: 'settings',
         component: () => import('src/pages/StoreSample.vue'),

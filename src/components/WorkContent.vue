@@ -178,20 +178,13 @@
       </q-scroll-area>
     </q-card-section>
     <q-card-actions align="center" class="q-pb-md">
-      <q-btn
-        target="_blank"
-        @click="emits('restart-timer')"
-        flat
-        label="restart"
-        color="primary"
+      <RestartFinish
+        v-if="route.name === 'Timer'"
+        @set-content="store.setLog(logOfWork)"
       />
-      <q-btn
-        @click="store.setLog(logOfWork)"
-        to="/"
-        flat
-        label="finish"
-        color="dark"
-        class="bg-primary text-bold"
+      <CancelUpdate
+        v-if="route.name === 'Daily Journal'"
+        @update-content="store.setLog(logOfWork)"
       />
     </q-card-actions>
   </q-card>
@@ -199,14 +192,17 @@
 
 <script setup lang="ts">
 import { Screen } from 'quasar';
+import CancelUpdate from 'src/components/parts/dialogBtns/CancelUpdate.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
+import RestartFinish from 'src/components/parts/dialogBtns/RestartFinish.vue';
+import { useRoute } from 'vue-router';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
-const props = defineProps<{ url: string }>();
-const emits = defineEmits<{ (e: 'restart-timer'): void }>();
 const store = useLogStore();
+const route = useRoute();
+const props = defineProps<{ url: string }>();
 const categoryList = ref<string[]>(['MySelf', 'Task']);
 const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);

@@ -24,7 +24,7 @@
       >
         <TimerCount :time="time" :formattedTime="formattedTime" />
       </div>
-      <WorkContent :url="shareUrl" @restart-timer="restartTimer" />
+      <WorkContent :url="shareUrl" />
     </q-dialog>
   </q-page>
 </template>
@@ -33,14 +33,13 @@
 import { date } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import { timeCounterFromMS } from 'src/utils/func';
 import TimerCount from 'src/components/parts/TimerCount.vue';
-import WorkContent from 'src/components/dialog/WorkContent.vue';
+import WorkContent from 'src/components/WorkContent.vue';
 
 const shareUrl = ref<string>('');
 const dialog = ref<boolean>(false);
-
 const timerId = ref<number>();
 const startTime = ref<number>(Date.now());
 const stopTime = ref<number>(0);
@@ -88,6 +87,7 @@ const restartTimer = () => {
   startTimer();
 };
 
+provide('restart-timer', restartTimer);
 startTimer();
 
 onBeforeRouteLeave((to, from) => {
