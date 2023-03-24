@@ -1,10 +1,7 @@
 <template>
   <q-page class="row justify-evenly">
     <div class="fixed text-center q-mt-lg text-h5">
-      <p>Start : {{ store.today }} {{ formattedTime }}</p>
-      <div class="">
-        <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
-      </div>
+      <TimerCount :time="time" :formattedTime="formattedTime" />
     </div>
     <div style="margin-top: 170px">comment</div>
     <q-btn
@@ -20,10 +17,7 @@
         class="absolute z-top q-mt-md text-center text-h5 top-0"
         style="height: 140px"
       >
-        <p>Start : {{ store.today }}</p>
-        <div class="">
-          <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
-        </div>
+        <TimerCount :time="time" :formattedTime="formattedTime" />
       </div>
       <q-card
         class="bg-dark"
@@ -239,6 +233,7 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 import { timeCounterFromMS } from 'src/utils/func';
+import TimerCount from 'src/components/TimerCount.vue';
 
 const store = useLogStore();
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
