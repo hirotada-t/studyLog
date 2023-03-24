@@ -1,13 +1,4 @@
 <template>
-  <div
-    class="absolute z-top q-mt-md text-center text-h5 top-0"
-    style="height: 140px"
-  >
-    <p>Start : {{ store.today }}</p>
-    <div class="">
-      <span style="font-size: 90px; line-height: 0.7em">{{ time }}</span>
-    </div>
-  </div>
   <q-card
     class="bg-dark"
     flat
@@ -15,9 +6,8 @@
   >
     <q-card-section align="center">
       <q-btn
-        v-if="dialog"
         target="_blank"
-        :href="shareUrl"
+        :href="url"
         flat
         label="share on twitter"
         icon="ios_share"
@@ -190,7 +180,7 @@
     <q-card-actions align="center" class="q-pb-md">
       <q-btn
         target="_blank"
-        @click="restartTimer"
+        @click="emits('restart-timer')"
         flat
         label="restart"
         color="primary"
@@ -206,15 +196,28 @@
     </q-card-actions>
   </q-card>
 </template>
+
 <script setup lang="ts">
+import { Screen } from 'quasar';
 import { useLogStore } from 'src/store/logStore';
+import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
-const props = defineProps<>();
-const emits = defineEmits<>();
+const props = defineProps<{ url: string }>();
+const emits = defineEmits<{ (e: 'restart-timer'): void }>();
 const store = useLogStore();
 const categoryList = ref<string[]>(['MySelf', 'Task']);
 const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);
+const url = ref<string>(props.url);
+const logOfWork = ref<DailyLog>({
+  startMS: Date.now(),
+  studyMS: 0,
+  title: '',
+  category: '',
+  tagList: [],
+  focusLevel: 3,
+  studyContents: '',
+});
 </script>
