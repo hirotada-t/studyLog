@@ -15,11 +15,11 @@ type State = {
 export const useLogStore = defineStore('log', {
   state: (): State => ({
     weeklyLogList: {
-      '03/23': [
+      '03/24': [
         {
           startMS: 0,
           studyMS: 3600000,
-          title: '',
+          title: '1111',
           category: '',
           tagList: [],
           focusLevel: 2,
@@ -28,7 +28,7 @@ export const useLogStore = defineStore('log', {
         {
           startMS: 100,
           studyMS: 3600000,
-          title: '',
+          title: '2222',
           category: '',
           tagList: [],
           focusLevel: 2,
@@ -44,7 +44,7 @@ export const useLogStore = defineStore('log', {
       console.log();
     },
     getAdayTotalHours: (state) => {
-      return (date: string) => {
+      return (date: string): number => {
         const arr = state.weeklyLogList[date];
         let res = 0;
         for (let i = 0; i < arr.length; i++) {
