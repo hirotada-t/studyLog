@@ -35,8 +35,8 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 import { timeCounterFromMS } from 'src/utils/func';
-import TimerCount from 'src/parts/TimerCount.vue';
-import WorkContent from 'src/parts/WorkContent.vue';
+import TimerCount from 'src/components/parts/TimerCount.vue';
+import WorkContent from 'src/components/dialog/WorkContent.vue';
 
 const shareUrl = ref<string>('');
 const dialog = ref<boolean>(false);
