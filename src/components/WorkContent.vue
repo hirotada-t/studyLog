@@ -1,8 +1,43 @@
 <template>
+  <div class="absolute z-top q-mt-md text-center text-h5 top-0">
+    <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
+      Start :
+      <q-btn @click="dialog = true" padding="none" size="lg" flat>
+        {{ store.today }} {{ startTime
+        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+      </q-btn>
+    </p>
+    <div class="text-h1">
+      {{ time }}
+    </div>
+    <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
+      End :
+      <q-btn @click="dialog = true" padding="none" size="lg" flat>
+        {{ store.today }} {{ startTime
+        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+      </q-btn>
+    </p>
+    <q-dialog v-model="dialog" full-width>
+      <q-card dark>
+        <q-card-section>
+          <div class="text-h6">Edit start time.</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none row">
+          <q-input dark v-model="startTime" type="time" />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
   <q-card
     class="bg-dark"
     flat
-    style="border: 2px solid #888; margin-top: 140px"
+    style="border: 2px solid #888"
+    :style="`margin-top:${timerHeight}px`"
   >
     <q-card-section align="center">
       <q-btn
@@ -25,7 +60,7 @@
         visible
         class="q-pt-sm"
         :class="Screen.height > 777 ? '' : 'q-pr-md'"
-        :style="Screen.height > 777 ? { height: '450px' } : { height: '350px' }"
+        :style="Screen.height > 777 ? { height: '450px' } : { height: '330px' }"
       >
         <q-form class="q-gutter-y-md column">
           <q-input
@@ -135,6 +170,7 @@
                 label-always
                 :label-value="faceOfFocus[logOfWork.focusLevel - 1]"
                 :switch-label-side="logOfWork.focusLevel === 1"
+                marker-labels-class="text-subtitle1"
                 track-size="10px"
                 thumb-size="25px"
                 markers
@@ -178,46 +214,56 @@
       </q-scroll-area>
     </q-card-section>
     <q-card-actions align="center" class="q-pb-md">
-      <q-btn
-        target="_blank"
-        @click="emits('restart-timer')"
-        flat
-        label="restart"
-        color="primary"
+      <WorkResult
+        v-if="route.name === 'Timer'"
+        @set-content="store.setLog(logOfWork)"
       />
-      <q-btn
-        @click="store.setLog(logOfWork)"
-        to="/"
-        flat
-        label="finish"
-        color="dark"
-        class="bg-primary text-bold"
+      <CreateManual
+        v-if="route.name === 'Daily Journal'"
+        @update-content="store.setLog(logOfWork)"
       />
     </q-card-actions>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import { Screen } from 'quasar';
+import { date, Screen } from 'quasar';
+import CreateManual from 'src/components/parts/dialogBtns/CreateManual.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
+import WorkResult from 'src/components/parts/dialogBtns/WorkResult.vue';
+import { useRoute } from 'vue-router';
+import { timeFromMS } from 'src/utils/timeFormat';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
-const props = defineProps<{ url: string }>();
-const emits = defineEmits<{ (e: 'restart-timer'): void }>();
 const store = useLogStore();
-const categoryList = ref<string[]>(['MySelf', 'Task']);
-const newCat = ref<string>('');
-const addNewCat = ref<boolean>(false);
-const url = ref<string>(props.url);
+const route = useRoute();
+const props = defineProps<{
+  startMS: number;
+  timeMS: number;
+  timerHeight: number;
+}>();
+const dialog = ref<boolean>(false);
 const logOfWork = ref<DailyLog>({
-  startMS: Date.now(),
-  studyMS: 0,
+  startMS: props.startMS,
+  studyMS: props.timeMS,
   title: '',
   category: '',
   tagList: [],
   focusLevel: 3,
   studyContents: '',
 });
+const startTime = ref<string>(
+  date.formatDate(logOfWork.value.startMS, 'HH:mm')
+);
+const time = ref<string>(timeFromMS(logOfWork.value.studyMS));
+const categoryList = ref<string[]>(['MySelf', 'Task']);
+const newCat = ref<string>('');
+const addNewCat = ref<boolean>(false);
+const url = ref<string>(
+  'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
+    time.value +
+    '時間勉強しました&hashtags=StudyLog,毎日コツコツ'
+);
 </script>

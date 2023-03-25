@@ -1,16 +1,26 @@
 <template>
   <q-page class="row justify-evenly">
     <div class="fixed text-center q-mt-lg text-h5">
-      <TimerCount :time="time" :formattedTime="formattedTime" />
+      <p
+        class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs"
+      >
+        Start : {{ store.today }} {{ startTime }}
+      </p>
+      <div class="text-h1">
+        {{ time }}
+      </div>
     </div>
     <div style="margin-top: 170px">comment</div>
     <q-btn
       round
-      @click="stopTimer"
+      @click="
+        pauseTimer();
+        dialog = true;
+      "
       class="absolute stop-btn bg-dark"
       style="z-index: 10"
     >
-      <q-icon size="120px" color="positive" name="fa-regular fa-circle-pause" />
+      <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
     </q-btn>
     <q-dialog
       v-model="dialog"
@@ -18,13 +28,7 @@
       full-width
       class="result-window q-pt-lg"
     >
-      <div
-        class="absolute z-top q-mt-md text-center text-h5 top-0"
-        style="height: 140px"
-      >
-        <TimerCount :time="time" :formattedTime="formattedTime" />
-      </div>
-      <WorkContent :url="shareUrl" @restart-timer="restartTimer" />
+      <WorkContent :startMS="start" :timeMS="diffMS" :timerHeight="160" />
     </q-dialog>
   </q-page>
 </template>
@@ -32,64 +36,45 @@
 <script setup lang="ts">
 import { date } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
-import { DailyLog } from 'src/types/util.interface';
-import { ref } from 'vue';
-import { timeCounterFromMS } from 'src/utils/func';
-import TimerCount from 'src/parts/TimerCount.vue';
-import WorkContent from 'src/parts/WorkContent.vue';
+import { ref, provide } from 'vue';
+import { timeCounterFromMS } from 'src/utils/timeFormat';
+import WorkContent from 'src/components/WorkContent.vue';
+import { useLogStore } from 'src/store/logStore';
 
-const shareUrl = ref<string>('');
+const store = useLogStore();
 const dialog = ref<boolean>(false);
-
-const timerId = ref<number>();
-const startTime = ref<number>(Date.now());
-const stopTime = ref<number>(0);
-const formattedTime: string = date.formatDate(startTime.value, 'HH:mm');
-const diff = ref<number>(0);
+const timerId = ref<number>(0);
+const startMS = ref<number>(Date.now());
+const start = startMS.value;
+const stopMS = ref<number>(0);
+const diffMS = ref<number>(0);
 const time = ref<string>('0:00:00');
-const logOfWork = ref<DailyLog>({
-  startMS: Date.now(),
-  studyMS: 0,
-  title: '',
-  category: '',
-  tagList: [],
-  focusLevel: 3,
-  studyContents: '',
-});
+const startTime: string = date.formatDate(startMS.value, 'HH:mm');
 
 const displayTimer = () => {
   timerId.value = window.setTimeout(() => {
-    diff.value = Date.now() - startTime.value + stopTime.value;
+    diffMS.value = Date.now() - startMS.value + stopMS.value;
 
-    time.value = timeCounterFromMS(diff.value);
-    shareUrl.value =
-      'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
-      time.value +
-      '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
+    time.value = timeCounterFromMS(diffMS.value);
     displayTimer();
   }, 250);
 };
 const startTimer = () => {
+  startMS.value = Date.now();
   dialog.value = false;
-  startTime.value = Date.now();
   displayTimer();
 };
 const pauseTimer = () => {
-  clearInterval(timerId.value);
-  stopTime.value += Date.now() - startTime.value;
+  clearTimeout(timerId.value);
+  stopMS.value += Date.now() - startMS.value;
 };
-const stopTimer = () => {
-  pauseTimer();
-  dialog.value = true;
-  logOfWork.value.studyMS = diff.value;
-};
-const restartTimer = () => {
+const resetTimer = () => {
   dialog.value = false;
-  startTimer();
+  location.reload();
 };
 
+provide('reset-timer', resetTimer);
 startTimer();
-
 onBeforeRouteLeave((to, from) => {
   if (!dialog.value && from.name === 'Timer') {
     pauseTimer();
