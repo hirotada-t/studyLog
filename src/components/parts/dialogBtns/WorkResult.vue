@@ -21,12 +21,11 @@ import { inject } from 'vue';
 const emits = defineEmits<{ (e: 'set-content'): void }>();
 const resetTimer = inject<() => void>('reset-timer');
 const confirmReset = () => {
-
   const answer = window.confirm(
-      'Do you really want to reset? The result is deleted.'
-    );
-    if (answer) {
-      if(resetTimer) resetTimer();
-    }
+    'Do you really want to reset? The result is deleted.'
+  );
+  if (answer) {
+    if (resetTimer) resetTimer();
+  }
 };
 </script>

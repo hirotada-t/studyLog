@@ -3,7 +3,8 @@
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       Start :
       <q-btn @click="dialog = true" padding="none" size="lg" flat>
-        {{ store.today }} {{ startTime }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+        {{ store.today }} {{ startTime
+        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
     </p>
     <div class="text-h1">
@@ -12,7 +13,8 @@
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       End :
       <q-btn @click="dialog = true" padding="none" size="lg" flat>
-        {{ store.today }} {{ startTime }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+        {{ store.today }} {{ startTime
+        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
     </p>
     <q-dialog v-model="dialog" full-width>
@@ -264,5 +266,4 @@ const url = ref<string>(
     time.value +
     '時間勉強しました&hashtags=StudyLog,毎日コツコツ'
 );
-
 </script>
