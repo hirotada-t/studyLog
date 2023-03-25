@@ -1,7 +1,7 @@
 <template>
   <q-btn
     target="_blank"
-    @click="restartTimer"
+    @click="closeDialog"
     flat
     label="cancel"
     color="primary"
@@ -18,6 +18,6 @@
 <script setup lang="ts">
 import { inject } from 'vue';
 
-const restartTimer = inject<() => void>('restart-timer');
+const closeDialog = inject<() => void>('close-dialog');
 const emits = defineEmits<{ (e: 'update-content'): void }>();
 </script>

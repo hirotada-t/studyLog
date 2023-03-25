@@ -26,17 +26,17 @@ const routes: RouteRecordRaw[] = [
           {
             name: 'Monthly Summary',
             path: 'monthly',
-            component: () => import('src/pages/MonthlyPage.vue'),
+            component: () => import('src/pages/summary/MonthlyPage.vue'),
           },
           {
             name: 'Weekly Summary',
             path: 'weekly',
-            component: () => import('src/pages/WeeklyPage.vue'),
+            component: () => import('src/pages/summary/WeeklyPage.vue'),
           },
           {
             name: 'Chart',
             path: 'chart',
-            component: () => import('src/pages/ChartPage.vue'),
+            component: () => import('src/pages/summary/ChartPage.vue'),
           },
         ],
       },
@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Settings',
         path: 'settings',
-        component: () => import('src/pages/StoreSample.vue'),
+        component: () => import('src/pages/del/StoreSample.vue'),
       },
     ],
   },
