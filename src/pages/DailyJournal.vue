@@ -62,13 +62,7 @@
       full-width
       class="result-window q-pt-lg"
     >
-      <div
-        class="absolute z-top q-mt-md text-center text-h5 top-0"
-        style="height: 140px"
-      >
-        <TimerCount time="" formattedTime="" />
-      </div>
-      <WorkContent :url="shareUrl" />
+      <WorkContent :startMS="0" :timeMS="0" :timerHeight="160" />
     </q-dialog>
     <div class="" ref="weeklyData">
       <q-separator dark color="grey-6" />
@@ -115,10 +109,9 @@
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
 import WorkContent from 'src/components/WorkContent.vue';
-import TimerCount from 'src/components/parts/TimerCount.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
-import { timeFromMS } from 'src/utils/func';
+import { timeFromMS } from 'src/utils/timeFormat';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 
@@ -128,7 +121,6 @@ const shareUrl =
   'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
-
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const store = useLogStore();
 const dialog = ref<boolean>(false);
