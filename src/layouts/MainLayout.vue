@@ -3,9 +3,9 @@
     <q-layout view="hHh lpR fFf">
       <q-header bordered class="bg-header text-white">
         <q-toolbar>
-          <q-toolbar-title class="text-center">{{
-            $route.name
-          }}</q-toolbar-title>
+          <q-toolbar-title class="text-center">
+            {{ $route.name }}
+          </q-toolbar-title>
         </q-toolbar>
       </q-header>
 
