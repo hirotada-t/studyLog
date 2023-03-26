@@ -37,9 +37,9 @@
 import { date } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ref, provide } from 'vue';
-import { timeCounterFromMS } from 'src/utils/timeFormat';
 import WorkContent from 'src/components/WorkContent.vue';
 import { useLogStore } from 'src/store/logStore';
+import { Func } from 'src/utils/timeFormat';
 
 const store = useLogStore();
 const dialog = ref<boolean>(false);
@@ -55,7 +55,7 @@ const displayTimer = () => {
   timerId.value = window.setTimeout(() => {
     diffMS.value = Date.now() - startMS.value + stopMS.value;
 
-    time.value = timeCounterFromMS(diffMS.value);
+    time.value = Func.timeCounterFromMS(diffMS.value);
     displayTimer();
   }, 250);
 };

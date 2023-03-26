@@ -2,7 +2,7 @@
   <div class="absolute z-top q-mt-md text-center text-h5 top-0">
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       Start :
-      <q-btn @click="dialog = true" padding="none" size="lg" flat>
+      <q-btn @click="editStart" padding="none" size="lg" flat>
         {{ store.today }} {{ startTime
         }}<q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
@@ -12,23 +12,23 @@
     </div>
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       End :
-      <q-btn @click="dialog = true" padding="none" size="lg" flat>
+      <q-btn @click="editEnd" padding="none" size="lg" flat>
         {{ store.today }} {{ startTime
         }}<q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
     </p>
-    <q-dialog v-model="dialog" full-width>
+    <q-dialog v-model="dialog.open" full-width>
       <q-card dark>
         <q-card-section>
-          <div class="text-h6">Edit start time.</div>
+          <div class="text-h6">Edit {{ dialog.target }} time.</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none row">
-          <q-input dark v-model="startTime" type="time" />
+          <q-input dark v-model="dialog.time" type="time" />
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
+          <q-btn flat label="OK" color="primary" @click="fixTime" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -234,7 +234,7 @@ import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 import WorkResult from 'src/components/parts/dialogBtns/WorkResult.vue';
 import { useRoute } from 'vue-router';
-import { timeFromMS } from 'src/utils/timeFormat';
+import { Func } from 'src/utils/timeFormat';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
 const store = useLogStore();
@@ -244,7 +244,15 @@ const props = defineProps<{
   timeMS: number;
   timerHeight: number;
 }>();
-const dialog = ref<boolean>(false);
+const dialog = ref<{
+  open: boolean;
+  target: '' | 'end' | 'start';
+  time: string;
+}>({
+  open: false,
+  target: '',
+  time: '',
+});
 const logOfWork = ref<DailyLog>({
   startMS: props.startMS,
   studyMS: props.timeMS,
@@ -257,7 +265,9 @@ const logOfWork = ref<DailyLog>({
 const startTime = ref<string>(
   date.formatDate(logOfWork.value.startMS, 'HH:mm')
 );
-const time = ref<string>(timeFromMS(logOfWork.value.studyMS));
+const time = ref<string>(Func.timeFromMS(logOfWork.value.studyMS));
+const endMS = ref<number>(logOfWork.value.startMS + logOfWork.value.studyMS);
+const endTime = ref<string>(date.formatDate(endMS.value, 'HH:mm'));
 const categoryList = ref<string[]>(['MySelf', 'Task']);
 const newCat = ref<string>('');
 const addNewCat = ref<boolean>(false);
@@ -266,4 +276,27 @@ const url = ref<string>(
     time.value +
     '時間勉強しました&hashtags=StudyLog,毎日コツコツ'
 );
+
+const editStart = () => {
+  dialog.value.open = true;
+  dialog.value.time = startTime.value;
+  dialog.value.target = 'start';
+};
+const editEnd = () => {
+  dialog.value.open = true;
+  dialog.value.time = endTime.value;
+  dialog.value.target = 'end';
+};
+const fixTime = () => {
+  if (dialog.value.target == 'start') {
+    console.log(1);
+  } else if (dialog.value.target == 'end') {
+    console.log(2);
+  }
+  logOfWork.value.startMS = 22222220;
+  logOfWork.value.studyMS = 22222220;
+  dialog.value.open = false;
+  dialog.value.time = '';
+  dialog.value.target = '';
+};
 </script>
