@@ -8,14 +8,14 @@
       animated
       control-color="primary"
       class="rounded-borders"
+      :height="visibleArea - 100 + 'px'"
     >
       <q-carousel-slide
         v-for="([ymd, log], index) of Array.from(store.weeklyLogList)"
         :key="index"
         :name="date.formatDate(ymd, 'dd')"
-        class="column no-wrap flex-center q-px-none"
-        >
-
+        class="q-px-none"
+      >
         <div class="" ref="dailyData">
           <h2 class="q-mt-none text-h5">{{ ymd }} Summary</h2>
           <q-separator dark color="grey-6" style="width: 100%" />
@@ -58,15 +58,11 @@
           </div>
         </div>
 
-        <q-separator dark color="grey-6" style="width: 100%;" />
+        <q-separator dark color="grey-6" style="width: 100%" />
 
-        <div class="" ref="workList" style="width: 100%;">
+        <div class="" ref="workList" style="width: 100%">
           <q-list dark separator>
-            <q-item
-              v-for="item of log"
-              :key="item.startMS"
-              clickable
-            >
+            <q-item v-for="item of log" :key="item.startMS" clickable>
               <q-item-section>{{ item.title }}</q-item-section>
               <q-item-section avatar>
                 <q-icon name="arrow_forward_ios"></q-icon>
@@ -152,7 +148,7 @@ import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { timeFromMS } from 'src/utils/timeFormat';
 
-const slide = ref('Su');
+const slide = ref(date.formatDate(Date.now(), 'dd'));
 
 const store = useLogStore();
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];

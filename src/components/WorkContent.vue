@@ -243,7 +243,7 @@ const props = defineProps<{
   startMS: number;
   timeMS: number;
   timerHeight: number;
-  pageDate:string;
+  pageDate: string;
 }>();
 
 const dialog = ref<{
