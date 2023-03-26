@@ -3,8 +3,8 @@
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       Start :
       <q-btn @click="editStart" padding="none" size="lg" flat>
-        {{ store.today }} {{ startTime
-        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+        {{ pageDate }} {{ startTime }}
+        <q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
     </p>
     <div class="text-h1">
@@ -234,7 +234,7 @@ import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 import WorkResult from 'src/components/parts/dialogBtns/WorkResult.vue';
 import { useRoute } from 'vue-router';
-import { Func } from 'src/utils/timeFormat';
+import { timeFromMS, MSFromTime } from 'src/utils/timeFormat';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
 const store = useLogStore();
@@ -243,7 +243,9 @@ const props = defineProps<{
   startMS: number;
   timeMS: number;
   timerHeight: number;
+  pageDate:string;
 }>();
+
 const dialog = ref<{
   open: boolean;
   target: '' | 'end' | 'start';
@@ -265,7 +267,7 @@ const logOfWork = ref<DailyLog>({
 const startTime = ref<string>(
   date.formatDate(logOfWork.value.startMS, 'HH:mm')
 );
-const time = ref<string>(Func.timeFromMS(logOfWork.value.studyMS));
+const time = ref<string>(timeFromMS(logOfWork.value.studyMS));
 const endMS = ref<number>(logOfWork.value.startMS + logOfWork.value.studyMS);
 const endTime = ref<string>(date.formatDate(endMS.value, 'HH:mm'));
 const categoryList = ref<string[]>(['MySelf', 'Task']);
@@ -288,13 +290,17 @@ const editEnd = () => {
   dialog.value.target = 'end';
 };
 const fixTime = () => {
+  console.log(dialog.value.time);
+  const timeMS = MSFromTime(dialog.value.time);
   if (dialog.value.target == 'start') {
-    console.log(1);
+    logOfWork.value.startMS = timeMS;
+    logOfWork.value.studyMS = timeMS - logOfWork.value.startMS;
+    startTime.value = date.formatDate(timeMS, 'HH:mm');
   } else if (dialog.value.target == 'end') {
-    console.log(2);
+    logOfWork.value.startMS = timeMS;
+    logOfWork.value.studyMS = timeMS - logOfWork.value.startMS;
+    startTime.value = date.formatDate(timeMS, 'HH:mm');
   }
-  logOfWork.value.startMS = 22222220;
-  logOfWork.value.studyMS = 22222220;
   dialog.value.open = false;
   dialog.value.time = '';
   dialog.value.target = '';
