@@ -84,8 +84,8 @@
             class="result-window q-pt-lg"
           >
             <WorkContent
-              :pageDate="`a`"
-              :startMS="0"
+              :pageDate="ymd"
+              :startMS="Date.now()"
               :timeMS="0"
               :timerHeight="160"
             />
