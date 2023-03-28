@@ -28,7 +28,7 @@
       full-width
       class="result-window q-pt-lg"
     >
-      <WorkContent :startMS="start" :timeMS="diffMS" :timerHeight="160" />
+      <WorkContent :pageDate="store.today" :startMS="start" :timeMS="diffMS" :timerHeight="160" />
     </q-dialog>
   </q-page>
 </template>

@@ -1,4 +1,6 @@
 // app global css in SCSS form
+@use "./util.scss";
+
 body {
   background-color: $dark;
   color: $baseWhite;
@@ -42,20 +44,8 @@ $btn-gutter: calc(100vw * 0.05);
   }
 }
 
-.w-20pc {
-  width: 20%;
-}
-
 .q-dialog__backdrop {
   backdrop-filter: blur(10px);
-}
-
-.top-0 {
-  top: 0;
-}
-
-.bg333 {
-  background-color: #333333 !important;
 }
 
 .adjust-page-3lists {
