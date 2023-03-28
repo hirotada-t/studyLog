@@ -38,7 +38,7 @@
             </div>
             <div class="col-4 text-center">
               <h3 class="q-my-none text-h5">
-                {{ timeFromMS(dailyTotalHoursMS) }}
+                {{ timeFromMS(store.getAdayTotalHoursMS(ymd)) }}
               </h3>
               <p>Daily total</p>
               <h3 class="q-my-none text-h5">
@@ -85,7 +85,9 @@
           >
             <WorkContent
               :pageDate="ymd"
-              :startMS="Date.now()"
+              :startMS="
+                MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
+              "
               :timeMS="0"
               :timerHeight="160"
             />
@@ -146,18 +148,17 @@ import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { timeFromMS } from 'src/utils/timeFormat';
-
-const slide = ref(date.formatDate(Date.now(), 'dd'));
+import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
 
 const store = useLogStore();
+const slide = ref(date.formatDate(Date.now(), 'dd'));
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const shareUrl =
   'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
 const dialog = ref<boolean>(false);
-const dailyTotalHoursMS = ref<number>(store.getAdayTotalHours(store.today));
+const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
 const doc = ref();
 const dailyData = ref();
@@ -176,7 +177,7 @@ const recordThisWeek = (): Records[] => {
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
-    const rate = (store.getAdayTotalHours(key) * 100) / store.weeklyTarget;
+    const rate = (store.getAdayTotalHoursMS(key) * 100) / store.weeklyTarget;
     obj[dd] = {
       date: dMS,
       rate: rate,

@@ -205,7 +205,7 @@ export const useLogStore = defineStore('log', {
     getRecordOfWeek: () => {
       console.log();
     },
-    getAdayTotalHours: (state) => {
+    getAdayTotalHoursMS: (state) => {
       return (date: string): number => {
         const arr = state.weeklyLogList.get(date);
         let res = 0;
@@ -218,13 +218,15 @@ export const useLogStore = defineStore('log', {
     },
   },
   actions: {
-    setLog(value: DailyLog) {
+    setLog(ymd: string, value: DailyLog) {
       console.log(value);
+      console.log(ymd)
       if (value.title === '') {
-        value.title = date.formatDate(value.startMS, 'MM/DD HH:mm ~');
+        value.title = date.formatDate(value.startMS, 'MM/DD HH:mm ~ ');
+        value.title += date.formatDate(value.startMS + value.studyMS,'HH:mm');
       }
 
-      const log = this.weeklyLogList.get(this.today);
+      const log = this.weeklyLogList.get(ymd);
       if (this.dayOfWeek === 'Su' && !log) {
         this.weeklyLogList.clear();
       }

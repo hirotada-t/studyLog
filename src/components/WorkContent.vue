@@ -28,13 +28,25 @@
             dark
             v-model="dialog.time"
             type="time"
-            :rules="[(val) => validateEditTime(val, dialog.target) || 'Please enter the appropriate time']"
+            :rules="[
+              (val) =>
+                validateEditTime(val, dialog.target) ||
+                'Please enter the appropriate time',
+            ]"
             class="w-100pc"
           />
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" @click="fixTime" />
+          <q-btn dark v-close-popup label="cancel" flat color="primary" />
+          <q-btn
+            :disable="!validateEditTime(dialog.time, dialog.target)"
+            dark
+            label="OK"
+            color="primary"
+            text-color="dark"
+            @click="fixTime"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -222,11 +234,11 @@
     <q-card-actions align="center" class="q-pb-md">
       <WorkResult
         v-if="route.name === 'Timer'"
-        @set-content="store.setLog(logOfWork)"
+        @set-content="store.setLog(pageDate, logOfWork)"
       />
       <CreateManual
         v-if="route.name === 'Daily Journal'"
-        @update-content="store.setLog(logOfWork)"
+        @update-content="store.setLog(pageDate, logOfWork)"
       />
     </q-card-actions>
   </q-card>
@@ -297,7 +309,6 @@ const editEnd = () => {
 };
 const validateEditTime = (val: string, target: 'start' | 'end'): boolean => {
   const editedTimeMS = MSFromDateTime(props.pageDate, val);
-  console.log(date.formatDate(editedTimeMS))
   if (target === 'start') {
     return editedTimeMS <= endMS.value;
   } else if (target === 'end') {
