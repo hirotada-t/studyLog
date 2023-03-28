@@ -13,10 +13,7 @@
     <div style="margin-top: 170px">comment</div>
     <q-btn
       round
-      @click="
-        pauseTimer();
-        dialog = true;
-      "
+      @click="stopTimer()"
       class="absolute stop-btn bg-dark"
       style="z-index: 10"
     >
@@ -28,7 +25,12 @@
       full-width
       class="result-window q-pt-lg"
     >
-      <WorkContent :startMS="start" :timeMS="diffMS" :timerHeight="160" />
+      <WorkContent
+        :pageDate="store.today"
+        :startMS="start"
+        :timeMS="diffMS"
+        :timerHeight="160"
+      />
     </q-dialog>
   </q-page>
 </template>
@@ -68,7 +70,12 @@ const pauseTimer = () => {
   clearTimeout(timerId.value);
   stopMS.value += Date.now() - startMS.value;
 };
+const stopTimer = () => {
+  pauseTimer();
+  dialog.value = true;
+};
 const resetTimer = () => {
+  time.value = '0:00:00';
   dialog.value = false;
   location.reload();
 };

@@ -28,25 +28,22 @@
           />
         </q-btn>
         <q-tabs align="justify" indicator-color="transparent">
-          <q-route-tab name="home" to="/" icon="home" class="w-20pc" />
+          <q-route-tab name="home" to="/" icon="home" />
           <q-route-tab
             name="dailyJournal"
             to="/dailyJournal"
             icon="mdi-notebook"
-            class="w-20pc"
           />
-          <q-tab disable class="w-20pc" />
+          <q-tab disable  />
           <q-route-tab
             name="summary"
             to="/summary"
             icon="mdi-poll"
-            class="w-20pc"
           />
           <q-route-tab
             name="settings"
             to="/settings"
             icon="mdi-cog"
-            class="w-20pc"
           />
         </q-tabs>
       </q-footer>

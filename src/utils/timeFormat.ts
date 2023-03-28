@@ -18,9 +18,8 @@ export const timeCounterFromMS = (ms: number): string => {
 export const timeFromMS = (ms: number): string => {
   return hourFromMS(ms) + ':' + minFromMS(ms);
 };
-export const MSFromTime = (time: string): number => {
-  const ms = new Date(time).getTime();
-  console.log('milli - ' + ms);
-  console.log(date.formatDate(ms, 'YYYY/MM/DD - HH:mm'));
-  return Date.now();
+export const MSFromDateTime = (date: string, time: string): number => {
+  const formattedTime = date + '-' + time + ':00:00';
+  const ms = new Date(formattedTime).getTime();
+  return ms;
 };

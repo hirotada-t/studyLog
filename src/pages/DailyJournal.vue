@@ -9,6 +9,7 @@
       control-color="primary"
       class="rounded-borders"
       :height="visibleArea - 100 + 'px'"
+      ref="carousel"
     >
       <q-carousel-slide
         v-for="([ymd, log], index) of Array.from(store.weeklyLogList)"
@@ -24,21 +25,21 @@
               <q-knob
                 readonly
                 show-value
-                :max="rateOfAchievement < 100 ? 100 : rateOfAchievement"
-                v-model="rateOfAchievement"
+                :max="recordArr[index].rate < 100 ? 100 : recordArr[index].rate"
+                v-model="recordArr[index].rate"
                 size="140px"
                 font-size="40px"
                 :thickness="0.22"
                 color="primary"
                 track-color="grey-9"
               >
-                {{ rateOfAchievement }}%
+                {{ Math.floor(recordArr[index].rate) }}%
               </q-knob>
               <p class="q-mb-none">DailyTotal/YourTarget</p>
             </div>
             <div class="col-4 text-center">
               <h3 class="q-my-none text-h5">
-                {{ timeFromMS(dailyTotalHoursMS) }}
+                {{ timeFromMS(store.getAdayTotalHoursMS(ymd)) }}
               </h3>
               <p>Daily total</p>
               <h3 class="q-my-none text-h5">
@@ -85,7 +86,9 @@
           >
             <WorkContent
               :pageDate="ymd"
-              :startMS="Date.now()"
+              :startMS="
+                MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
+              "
               :timeMS="0"
               :timerHeight="160"
             />
@@ -111,8 +114,8 @@
             <q-knob
               readonly
               show-value
-              :max="recordMap[index].rate < 100 ? 100 : recordMap[index].rate"
-              v-model="recordMap[index].rate"
+              :max="recordArr[index].rate < 100 ? 100 : recordArr[index].rate"
+              v-model="recordArr[index].rate"
               size="10vw"
               font-size="15px"
               :thickness="0.17"
@@ -133,6 +136,22 @@
           />
         </div>
       </div>
+      <q-carousel-control position="bottom">
+        <q-btn
+          class="navigate__btn navigate__left absolute bg-dark"
+          @click="carousel.previous()"
+          :disable="slide === 'Su'"
+        >
+          <q-icon size="45px" style="color: #ccc" name="arrow_back_ios_new" />
+        </q-btn>
+        <q-btn
+          class="navigate__btn navigate__right absolute bg-dark"
+          @click="carousel.next()"
+          :disable="slide === 'Sa'"
+        >
+          <q-icon size="45px" style="color: #ccc" name="arrow_forward_ios" />
+        </q-btn>
+      </q-carousel-control>
     </div>
 
     <q-separator dark color="grey-6" />
@@ -146,18 +165,19 @@ import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { timeFromMS } from 'src/utils/timeFormat';
-
-const slide = ref(date.formatDate(Date.now(), 'dd'));
+import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
 
 const store = useLogStore();
+const slide = ref(date.formatDate(Date.now(), 'dd'));
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const shareUrl =
   'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
+const carousel = ref();
+console.log(carousel)
 const dialog = ref<boolean>(false);
-const dailyTotalHoursMS = ref<number>(store.getAdayTotalHours(store.today));
+const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
 const doc = ref();
 const dailyData = ref();
@@ -176,7 +196,7 @@ const recordThisWeek = (): Records[] => {
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
-    const rate = (store.getAdayTotalHours(key) * 100) / store.weeklyTarget;
+    const rate = (store.getAdayTotalHoursMS(key) * 100) / store.weeklyTarget;
     obj[dd] = {
       date: dMS,
       rate: rate,
@@ -186,9 +206,10 @@ const recordThisWeek = (): Records[] => {
   for (let i = 0; i < days.length; i++) {
     arr[i] = obj[days[i]];
   }
+  console.log(arr);
   return arr;
 };
-const recordMap = ref<Records[]>(recordThisWeek());
+const recordArr = ref<Records[]>(recordThisWeek());
 
 provide('close-dialog', () => (dialog.value = false));
 watch(

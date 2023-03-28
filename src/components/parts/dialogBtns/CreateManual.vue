@@ -1,17 +1,19 @@
 <template>
   <q-btn
     target="_blank"
-    @click="closeDialog"
+    @click="closeDialog!()"
     flat
     label="cancel"
     color="primary"
   />
   <q-btn
-    @click="emits('update-content')"
-    to="/"
-    flat
+    @click="
+      emits('update-content');
+      closeDialog!();
+    "
     label="update"
-    color="dark"
+    color="primary"
+    text-color="dark"
     class="bg-primary text-bold"
   />
 </template>

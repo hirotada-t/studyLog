@@ -9,9 +9,9 @@
   <q-btn
     @click="emits('set-content')"
     to="/"
-    flat
     label="finish"
-    color="dark"
+    color="primary"
+    text-color="dark"
     class="bg-primary text-bold"
   />
 </template>

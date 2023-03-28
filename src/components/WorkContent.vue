@@ -13,8 +13,8 @@
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       End :
       <q-btn @click="editEnd" padding="none" size="lg" flat>
-        {{ store.today }} {{ startTime
-        }}<q-icon size="xs" name="edit" class="q-ml-xs" />
+        {{ pageDate }} {{ endTime }}
+        <q-icon size="xs" name="edit" class="q-ml-xs" />
       </q-btn>
     </p>
     <q-dialog v-model="dialog.open" full-width>
@@ -24,11 +24,29 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none row">
-          <q-input dark v-model="dialog.time" type="time" />
+          <q-input
+            dark
+            v-model="dialog.time"
+            type="time"
+            :rules="[
+              (val) =>
+                validateEditTime(val, dialog.target) ||
+                'Please enter the appropriate time',
+            ]"
+            class="w-100pc"
+          />
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" @click="fixTime" />
+          <q-btn dark v-close-popup label="cancel" flat color="primary" />
+          <q-btn
+            :disable="!validateEditTime(dialog.time, dialog.target)"
+            dark
+            label="OK"
+            color="primary"
+            text-color="dark"
+            @click="fixTime"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -216,11 +234,11 @@
     <q-card-actions align="center" class="q-pb-md">
       <WorkResult
         v-if="route.name === 'Timer'"
-        @set-content="store.setLog(logOfWork)"
+        @set-content="store.setLog(pageDate, logOfWork)"
       />
       <CreateManual
         v-if="route.name === 'Daily Journal'"
-        @update-content="store.setLog(logOfWork)"
+        @update-content="store.setLog(pageDate, logOfWork)"
       />
     </q-card-actions>
   </q-card>
@@ -234,7 +252,7 @@ import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
 import WorkResult from 'src/components/parts/dialogBtns/WorkResult.vue';
 import { useRoute } from 'vue-router';
-import { timeFromMS, MSFromTime } from 'src/utils/timeFormat';
+import { timeFromMS, MSFromDateTime } from 'src/utils/timeFormat';
 
 const faceOfFocus = ['😣', '😑', '🙂', '😆'];
 const store = useLogStore();
@@ -248,16 +266,16 @@ const props = defineProps<{
 
 const dialog = ref<{
   open: boolean;
-  target: '' | 'end' | 'start';
+  target: 'end' | 'start';
   time: string;
 }>({
   open: false,
-  target: '',
+  target: 'end',
   time: '',
 });
 const logOfWork = ref<DailyLog>({
-  startMS: props.startMS,
-  studyMS: props.timeMS,
+  startMS: Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,
+  studyMS: Math.floor(props.timeMS / (1000 * 60)) * 1000 * 60,
   title: '',
   category: '',
   tagList: [],
@@ -289,20 +307,31 @@ const editEnd = () => {
   dialog.value.time = endTime.value;
   dialog.value.target = 'end';
 };
-const fixTime = () => {
-  console.log(dialog.value.time);
-  const timeMS = MSFromTime(dialog.value.time);
-  if (dialog.value.target == 'start') {
-    logOfWork.value.startMS = timeMS;
-    logOfWork.value.studyMS = timeMS - logOfWork.value.startMS;
-    startTime.value = date.formatDate(timeMS, 'HH:mm');
-  } else if (dialog.value.target == 'end') {
-    logOfWork.value.startMS = timeMS;
-    logOfWork.value.studyMS = timeMS - logOfWork.value.startMS;
-    startTime.value = date.formatDate(timeMS, 'HH:mm');
+const validateEditTime = (val: string, target: 'start' | 'end'): boolean => {
+  const editedTimeMS = MSFromDateTime(props.pageDate, val);
+  if (target === 'start') {
+    return editedTimeMS <= endMS.value;
+  } else if (target === 'end') {
+    return editedTimeMS >= logOfWork.value.startMS;
   }
+  return false;
+};
+const fixTime = () => {
+  const editedTimeMS = MSFromDateTime(props.pageDate, dialog.value.time);
+
+  if (dialog.value.target == 'start') {
+    logOfWork.value.startMS = editedTimeMS;
+    startTime.value = date.formatDate(editedTimeMS, 'HH:mm');
+  } else if (dialog.value.target == 'end') {
+    endTime.value = date.formatDate(editedTimeMS, 'HH:mm');
+    endMS.value = MSFromDateTime(props.pageDate, endTime.value);
+  }
+  const diffMS = endMS.value - logOfWork.value.startMS;
+  logOfWork.value.studyMS = diffMS < 0 ? 0 : diffMS;
+  time.value = timeFromMS(logOfWork.value.studyMS);
+
   dialog.value.open = false;
   dialog.value.time = '';
-  dialog.value.target = '';
+  dialog.value.target = 'end';
 };
 </script>
