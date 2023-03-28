@@ -24,15 +24,15 @@
               <q-knob
                 readonly
                 show-value
-                :max="rateOfAchievement < 100 ? 100 : rateOfAchievement"
-                v-model="rateOfAchievement"
+                :max="recordArr[index].rate < 100 ? 100 : recordArr[index].rate"
+                v-model="recordArr[index].rate"
                 size="140px"
                 font-size="40px"
                 :thickness="0.22"
                 color="primary"
                 track-color="grey-9"
               >
-                {{ rateOfAchievement }}%
+                {{ Math.floor(recordArr[index].rate) }}%
               </q-knob>
               <p class="q-mb-none">DailyTotal/YourTarget</p>
             </div>
@@ -111,8 +111,8 @@
             <q-knob
               readonly
               show-value
-              :max="recordMap[index].rate < 100 ? 100 : recordMap[index].rate"
-              v-model="recordMap[index].rate"
+              :max="recordArr[index].rate < 100 ? 100 : recordArr[index].rate"
+              v-model="recordArr[index].rate"
               size="10vw"
               font-size="15px"
               :thickness="0.17"
@@ -186,9 +186,10 @@ const recordThisWeek = (): Records[] => {
   for (let i = 0; i < days.length; i++) {
     arr[i] = obj[days[i]];
   }
+  console.log(arr);
   return arr;
 };
-const recordMap = ref<Records[]>(recordThisWeek());
+const recordArr = ref<Records[]>(recordThisWeek());
 
 provide('close-dialog', () => (dialog.value = false));
 watch(

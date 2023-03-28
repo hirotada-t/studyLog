@@ -262,8 +262,8 @@ const dialog = ref<{
   time: '',
 });
 const logOfWork = ref<DailyLog>({
-  startMS: props.startMS,
-  studyMS: props.timeMS,
+  startMS: Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,
+  studyMS: Math.floor(props.timeMS / (1000 * 60)) * 1000 * 60,
   title: '',
   category: '',
   tagList: [],
@@ -295,7 +295,6 @@ const editEnd = () => {
   dialog.value.time = endTime.value;
   dialog.value.target = 'end';
 };
-
 const validateEditTime = (val: string, target: 'start' | 'end'): boolean => {
   const editedTimeMS = MSFromDateTime(props.pageDate, val);
   console.log(date.formatDate(editedTimeMS))
@@ -319,8 +318,6 @@ const fixTime = () => {
   const diffMS = endMS.value - logOfWork.value.startMS;
   logOfWork.value.studyMS = diffMS < 0 ? 0 : diffMS;
   time.value = timeFromMS(logOfWork.value.studyMS);
-  console.log(logOfWork.value);
-  console.log(time.value);
 
   dialog.value.open = false;
   dialog.value.time = '';
