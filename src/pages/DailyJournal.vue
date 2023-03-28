@@ -9,6 +9,7 @@
       control-color="primary"
       class="rounded-borders"
       :height="visibleArea - 100 + 'px'"
+      ref="carousel"
     >
       <q-carousel-slide
         v-for="([ymd, log], index) of Array.from(store.weeklyLogList)"
@@ -135,6 +136,22 @@
           />
         </div>
       </div>
+      <q-carousel-control position="bottom">
+        <q-btn
+          class="navigate__btn navigate__left absolute bg-dark"
+          @click="carousel.previous()"
+          :disable="slide === 'Su'"
+        >
+          <q-icon size="45px" style="color: #ccc" name="arrow_back_ios_new" />
+        </q-btn>
+        <q-btn
+          class="navigate__btn navigate__right absolute bg-dark"
+          @click="carousel.next()"
+          :disable="slide === 'Sa'"
+        >
+          <q-icon size="45px" style="color: #ccc" name="arrow_forward_ios" />
+        </q-btn>
+      </q-carousel-control>
     </div>
 
     <q-separator dark color="grey-6" />
@@ -157,6 +174,8 @@ const shareUrl =
   'http://twitter.com/share?url=https://youtu.be/qYnA9wWFHLI&text=' +
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
+const carousel = ref();
+console.log(carousel)
 const dialog = ref<boolean>(false);
 const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
