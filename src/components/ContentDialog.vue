@@ -241,11 +241,11 @@
 
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
-import CreateManual from 'src/components/parts/dialogBtns/CreateManual.vue';
+import CreateManual from 'src/components/parts/dialogBtns/BtnsCreateManual.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
-import WorkResult from 'src/components/parts/dialogBtns/WorkResult.vue';
+import WorkResult from 'src/components/parts/dialogBtns/BtnsWorkResult.vue';
 import { useRoute } from 'vue-router';
 import { timeFromMS, MSFromDateTime } from 'src/utils/timeFormat';
 
