@@ -38,7 +38,7 @@
 import { date } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ref, provide } from 'vue';
-import WorkContent from 'src/components/WorkContent.vue';
+import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { timeCounterFromMS } from 'src/utils/timeFormat';
 
