@@ -19,16 +19,12 @@
     >
       <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
     </q-btn>
-    <q-dialog
-      v-model="dialog"
-      persistent
-      full-width
-      class="result-window"
-    >
+    <q-dialog v-model="dialog" persistent full-width class="result-window">
       <WorkContent
         :pageDate="store.today"
         :startMS="start"
         :timeMS="diffMS"
+        :logData="null"
       />
     </q-dialog>
   </q-page>

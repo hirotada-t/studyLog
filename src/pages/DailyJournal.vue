@@ -62,13 +62,27 @@
 
         <div class="" ref="workList" style="width: 100%">
           <q-list dark separator>
-            <q-item v-for="item of log" :key="item.startMS" clickable @click="dialog = true">
+            <q-item
+              v-for="item of log"
+              :key="item.startMS"
+              clickable
+              @click="
+                logForDialog = item;
+                dialog = true;
+              "
+            >
               <q-item-section>{{ item.title }}</q-item-section>
               <q-item-section avatar>
                 <q-icon name="arrow_forward_ios"></q-icon>
               </q-item-section>
             </q-item>
-            <q-item clickable @click="dialog = true">
+            <q-item
+              clickable
+              @click="
+                logForDialog = null;
+                dialog = true;
+              "
+            >
               <q-item-section class="text-center text-h6 text-weight-light">
                 <q-item-label>
                   Manually Add
@@ -89,7 +103,7 @@
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
               "
               :timeMS="0"
-              :logData="{}"
+              :logData="logForDialog"
             />
           </q-dialog>
         </div>
@@ -186,6 +200,7 @@ const visibleArea = Screen.height - adoveItemsHeight;
 const todayLog = ref<DailyLog[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
+const logForDialog = ref<DailyLog | null>(null);
 type Records = { date: number; rate: number };
 const recordThisWeek = (): Records[] => {
   const arr: Records[] = [];

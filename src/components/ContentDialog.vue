@@ -51,11 +51,7 @@
       </q-card>
     </q-dialog>
   </div>
-  <q-card
-    class="bg-dark"
-    flat
-    style="border: 2px solid #888"
-  >
+  <q-card class="bg-dark" flat style="border: 2px solid #888">
     <q-card-section align="center">
       <q-btn
         target="_blank"
@@ -260,7 +256,7 @@ const props = defineProps<{
   startMS: number;
   timeMS: number;
   pageDate: string;
-  logData: DailyLog;
+  logData: DailyLog | null;
 }>();
 
 const dialog = ref<{
@@ -275,11 +271,11 @@ const dialog = ref<{
 const logOfWork = ref<DailyLog>({
   startMS: Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,
   studyMS: Math.floor(props.timeMS / (1000 * 60)) * 1000 * 60,
-  title: '',
-  category: '',
-  tagList: [],
-  focusLevel: 3,
-  studyContents: '',
+  title: props.logData ? props.logData.title : '',
+  category: props.logData ? props.logData.category : '',
+  tagList: props.logData ? props.logData.tagList : [],
+  focusLevel: props.logData ? props.logData.focusLevel : 3,
+  studyContents: props.logData ? props.logData.studyContents : '',
 });
 const startTime = ref<string>(
   date.formatDate(logOfWork.value.startMS, 'HH:mm')
