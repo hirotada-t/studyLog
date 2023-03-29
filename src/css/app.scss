@@ -1,5 +1,5 @@
 // app global css in SCSS form
-@use "./util.scss";
+@use './util.scss';
 
 body {
   background-color: $dark;
@@ -34,7 +34,7 @@ $btn-gutter: calc(-2vw);
     right: 0;
     width: calc(100vw / 3 - 40px);
     &:disabled {
-      opacity: .3!important;
+      opacity: 0.3 !important;
     }
   }
   &__left {
@@ -61,4 +61,9 @@ $btn-gutter: calc(-2vw);
 
 .q-slider__text {
   font-size: 20px;
+}
+
+.result-window .q-dialog__inner {
+  align-items: end !important;
+  top: auto !important;
 }

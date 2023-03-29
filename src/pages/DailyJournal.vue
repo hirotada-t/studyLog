@@ -7,7 +7,6 @@
       transition-next="slide-left"
       animated
       control-color="primary"
-      class="rounded-borders"
       :height="visibleArea - 100 + 'px'"
       ref="carousel"
     >
@@ -15,7 +14,7 @@
         v-for="([ymd, log], index) of Array.from(store.weeklyLogList)"
         :key="index"
         :name="date.formatDate(ymd, 'dd')"
-        class="q-px-none"
+        class="q-pa-none"
       >
         <div class="" ref="dailyData">
           <h2 class="q-mt-none text-h5">{{ ymd }} Summary</h2>
@@ -63,13 +62,29 @@
 
         <div class="" ref="workList" style="width: 100%">
           <q-list dark separator>
-            <q-item v-for="item of log" :key="item.startMS" clickable>
+            <q-item
+              v-for="(item, i) of log"
+              :key="item.startMS"
+              clickable
+              @click="
+                editLogIndex = i;
+                logForDialog = item;
+                dialog = true;
+              "
+            >
               <q-item-section>{{ item.title }}</q-item-section>
               <q-item-section avatar>
                 <q-icon name="arrow_forward_ios"></q-icon>
               </q-item-section>
             </q-item>
-            <q-item clickable @click="dialog = true">
+            <q-item
+              clickable
+              @click="
+                editLogIndex = null;
+                logForDialog = null;
+                dialog = true;
+              "
+            >
               <q-item-section class="text-center text-h6 text-weight-light">
                 <q-item-label>
                   Manually Add
@@ -82,7 +97,7 @@
             v-model="dialog"
             persistent
             full-width
-            class="result-window q-pt-lg"
+            class="result-window"
           >
             <WorkContent
               :pageDate="ymd"
@@ -90,7 +105,8 @@
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
               "
               :timeMS="0"
-              :timerHeight="160"
+              :editLogIndex="editLogIndex"
+              :logData="logForDialog"
             />
           </q-dialog>
         </div>
@@ -160,7 +176,7 @@
 
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
-import WorkContent from 'src/components/WorkContent.vue';
+import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
@@ -175,7 +191,6 @@ const shareUrl =
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
 const carousel = ref();
-console.log(carousel)
 const dialog = ref<boolean>(false);
 const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
@@ -188,6 +203,8 @@ const visibleArea = Screen.height - adoveItemsHeight;
 const todayLog = ref<DailyLog[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
+const logForDialog = ref<DailyLog | null>(null);
+const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
 const recordThisWeek = (): Records[] => {
   const arr: Records[] = [];

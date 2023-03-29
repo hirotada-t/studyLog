@@ -11,6 +11,18 @@ type State = {
   weeklyTarget: number;
 };
 
+const insertToEmptyTitle = (
+  title: string,
+  startMS: number,
+  studyMS: number
+): string => {
+  if (title === '') {
+    title = date.formatDate(startMS, 'MM/DD HH:mm ~ ');
+    title += date.formatDate(startMS + studyMS, 'HH:mm');
+  }
+  return title;
+};
+
 export const useLogStore = defineStore('log', {
   state: (): State => ({
     weeklyLogList: new Map([
@@ -219,12 +231,11 @@ export const useLogStore = defineStore('log', {
   },
   actions: {
     setLog(ymd: string, value: DailyLog) {
-      console.log(value);
-      console.log(ymd)
-      if (value.title === '') {
-        value.title = date.formatDate(value.startMS, 'MM/DD HH:mm ~ ');
-        value.title += date.formatDate(value.startMS + value.studyMS,'HH:mm');
-      }
+      value.title = insertToEmptyTitle(
+        value.title,
+        value.startMS,
+        value.studyMS
+      );
 
       const log = this.weeklyLogList.get(ymd);
       if (this.dayOfWeek === 'Su' && !log) {
@@ -235,6 +246,17 @@ export const useLogStore = defineStore('log', {
       }
 
       if (log) log.push(value);
+    },
+    updateLog(ymd: string, index: number, value: DailyLog) {
+      value.title = insertToEmptyTitle(
+        value.title,
+        value.startMS,
+        value.studyMS
+      );
+      const log = this.weeklyLogList.get(ymd);
+      if (log) {
+        log[index] = value;
+      }
     },
   },
 });

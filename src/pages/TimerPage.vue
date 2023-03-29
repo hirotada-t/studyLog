@@ -19,17 +19,13 @@
     >
       <q-icon size="120px" color="positive" name="fa-regular fa-circle-stop" />
     </q-btn>
-    <q-dialog
-      v-model="dialog"
-      persistent
-      full-width
-      class="result-window q-pt-lg"
-    >
+    <q-dialog v-model="dialog" persistent full-width class="result-window">
       <WorkContent
         :pageDate="store.today"
         :startMS="start"
         :timeMS="diffMS"
-        :timerHeight="160"
+        :logData="null"
+        :editLogIndex="null"
       />
     </q-dialog>
   </q-page>
@@ -39,7 +35,7 @@
 import { date } from 'quasar';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ref, provide } from 'vue';
-import WorkContent from 'src/components/WorkContent.vue';
+import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { timeCounterFromMS } from 'src/utils/timeFormat';
 
@@ -95,9 +91,3 @@ onBeforeRouteLeave((to, from) => {
   }
 });
 </script>
-
-<style lang="scss">
-.result-window .q-dialog__inner {
-  align-items: start !important;
-}
-</style>
