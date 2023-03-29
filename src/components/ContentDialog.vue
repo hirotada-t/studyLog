@@ -241,7 +241,7 @@
 
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
-import CreateManual from 'src/components/parts/dialogBtns/BtnsCreateManual.vue';
+import CreateManual from 'src/components/parts/dialogBtns/BtnsDailyJournal.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
