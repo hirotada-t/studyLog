@@ -25,6 +25,7 @@
         :startMS="start"
         :timeMS="diffMS"
         :logData="null"
+        :editLogIndex="null"
       />
     </q-dialog>
   </q-page>

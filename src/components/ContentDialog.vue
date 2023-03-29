@@ -227,13 +227,13 @@
       </q-scroll-area>
     </q-card-section>
     <q-card-actions align="center" class="q-pb-md">
-      <WorkResult
+      <BtnsTimerResult
         v-if="route.name === 'Timer'"
         @set-content="store.setLog(pageDate, logOfWork)"
       />
-      <CreateManual
+      <BtnsDailyJournal
         v-if="route.name === 'Daily Journal'"
-        @update-content="store.setLog(pageDate, logOfWork)"
+        @update-content="updateContent"
       />
     </q-card-actions>
   </q-card>
@@ -241,11 +241,11 @@
 
 <script setup lang="ts">
 import { date, Screen } from 'quasar';
-import CreateManual from 'src/components/parts/dialogBtns/BtnsDailyJournal.vue';
+import BtnsDailyJournal from 'src/components/parts/dialog/BtnsDailyJournal.vue';
+import BtnsTimerResult from 'src/components/parts/dialog/BtnsTimerResult.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
 import { ref } from 'vue';
-import WorkResult from 'src/components/parts/dialogBtns/BtnsTimerResult.vue';
 import { useRoute } from 'vue-router';
 import { timeFromMS, MSFromDateTime } from 'src/utils/timeFormat';
 
@@ -257,6 +257,7 @@ const props = defineProps<{
   timeMS: number;
   pageDate: string;
   logData: DailyLog | null;
+  editLogIndex: number | null;
 }>();
 
 const dialog = ref<{
@@ -269,8 +270,12 @@ const dialog = ref<{
   time: '',
 });
 const logOfWork = ref<DailyLog>({
-  startMS: Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,
-  studyMS: Math.floor(props.timeMS / (1000 * 60)) * 1000 * 60,
+  startMS: props.logData
+    ? props.logData.startMS
+    : Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,
+  studyMS: props.logData
+    ? props.logData.studyMS
+    : Math.floor(props.timeMS / (1000 * 60)) * 1000 * 60,
   title: props.logData ? props.logData.title : '',
   category: props.logData ? props.logData.category : '',
   tagList: props.logData ? props.logData.tagList : [],
@@ -328,5 +333,12 @@ const fixTime = () => {
   dialog.value.open = false;
   dialog.value.time = '';
   dialog.value.target = 'end';
+};
+const updateContent = () => {
+  if (!props.logData) {
+    store.setLog(props.pageDate, logOfWork.value);
+  } else if (props.editLogIndex || props.editLogIndex === 0) {
+    store.updateLog(props.pageDate, props.editLogIndex, logOfWork.value);
+  } else return;
 };
 </script>

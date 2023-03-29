@@ -63,10 +63,11 @@
         <div class="" ref="workList" style="width: 100%">
           <q-list dark separator>
             <q-item
-              v-for="item of log"
+              v-for="(item, i) of log"
               :key="item.startMS"
               clickable
               @click="
+                editLogIndex = i;
                 logForDialog = item;
                 dialog = true;
               "
@@ -79,6 +80,7 @@
             <q-item
               clickable
               @click="
+                editLogIndex = null;
                 logForDialog = null;
                 dialog = true;
               "
@@ -103,6 +105,7 @@
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
               "
               :timeMS="0"
+              :editLogIndex="editLogIndex"
               :logData="logForDialog"
             />
           </q-dialog>
@@ -201,6 +204,7 @@ const todayLog = ref<DailyLog[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
 const logForDialog = ref<DailyLog | null>(null);
+const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
 const recordThisWeek = (): Records[] => {
   const arr: Records[] = [];
