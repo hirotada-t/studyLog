@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center q-mb-md">
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       Start :
       <q-btn @click="editStart" padding="none" size="lg" flat>
@@ -260,6 +260,7 @@ const props = defineProps<{
   startMS: number;
   timeMS: number;
   pageDate: string;
+  logData: DailyLog;
 }>();
 
 const dialog = ref<{

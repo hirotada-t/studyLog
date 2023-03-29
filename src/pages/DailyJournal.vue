@@ -89,6 +89,7 @@
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
               "
               :timeMS="0"
+              :logData="{}"
             />
           </q-dialog>
         </div>
