@@ -34,17 +34,9 @@
             to="/dailyJournal"
             icon="mdi-notebook"
           />
-          <q-tab disable  />
-          <q-route-tab
-            name="summary"
-            to="/summary"
-            icon="mdi-poll"
-          />
-          <q-route-tab
-            name="settings"
-            to="/settings"
-            icon="mdi-cog"
-          />
+          <q-tab disable />
+          <q-route-tab name="summary" to="/summary" icon="mdi-poll" />
+          <q-route-tab name="settings" to="/settings" icon="mdi-cog" />
         </q-tabs>
       </q-footer>
     </q-layout>
