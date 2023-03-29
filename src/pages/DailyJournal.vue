@@ -7,7 +7,6 @@
       transition-next="slide-left"
       animated
       control-color="primary"
-      class="rounded-borders"
       :height="visibleArea - 100 + 'px'"
       ref="carousel"
     >
@@ -15,7 +14,7 @@
         v-for="([ymd, log], index) of Array.from(store.weeklyLogList)"
         :key="index"
         :name="date.formatDate(ymd, 'dd')"
-        class="q-px-none"
+        class="q-pa-none"
       >
         <div class="" ref="dailyData">
           <h2 class="q-mt-none text-h5">{{ ymd }} Summary</h2>
@@ -63,7 +62,7 @@
 
         <div class="" ref="workList" style="width: 100%">
           <q-list dark separator>
-            <q-item v-for="item of log" :key="item.startMS" clickable>
+            <q-item v-for="item of log" :key="item.startMS" clickable @click="dialog = true">
               <q-item-section>{{ item.title }}</q-item-section>
               <q-item-section avatar>
                 <q-icon name="arrow_forward_ios"></q-icon>
@@ -82,7 +81,7 @@
             v-model="dialog"
             persistent
             full-width
-            class="result-window q-pt-lg"
+            class="result-window"
           >
             <WorkContent
               :pageDate="ymd"
@@ -90,7 +89,6 @@
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
               "
               :timeMS="0"
-              :timerHeight="160"
             />
           </q-dialog>
         </div>
@@ -175,7 +173,6 @@ const shareUrl =
   '11:11' +
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
 const carousel = ref();
-console.log(carousel)
 const dialog = ref<boolean>(false);
 const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);

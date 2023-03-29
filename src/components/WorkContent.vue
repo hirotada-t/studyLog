@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute z-top q-mt-md text-center text-h5 top-0">
+  <div class="text-center">
     <p class="text-h6 q-mb-none row items-center justify-center q-gutter-x-xs">
       Start :
       <q-btn @click="editStart" padding="none" size="lg" flat>
@@ -55,7 +55,6 @@
     class="bg-dark"
     flat
     style="border: 2px solid #888"
-    :style="`margin-top:${timerHeight}px`"
   >
     <q-card-section align="center">
       <q-btn
@@ -260,7 +259,6 @@ const route = useRoute();
 const props = defineProps<{
   startMS: number;
   timeMS: number;
-  timerHeight: number;
   pageDate: string;
 }>();
 

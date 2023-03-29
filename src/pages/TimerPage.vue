@@ -23,13 +23,12 @@
       v-model="dialog"
       persistent
       full-width
-      class="result-window q-pt-lg"
+      class="result-window"
     >
       <WorkContent
         :pageDate="store.today"
         :startMS="start"
         :timeMS="diffMS"
-        :timerHeight="160"
       />
     </q-dialog>
   </q-page>
@@ -95,9 +94,3 @@ onBeforeRouteLeave((to, from) => {
   }
 });
 </script>
-
-<style lang="scss">
-.result-window .q-dialog__inner {
-  align-items: start !important;
-}
-</style>
