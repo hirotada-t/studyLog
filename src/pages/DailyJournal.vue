@@ -18,7 +18,7 @@
       >
         <div class="" ref="dailyData">
           <h2 class="q-mt-none text-h5">{{ ymd }} Summary</h2>
-          <q-separator dark color="grey-6" style="width: 100%" />
+          <q-separator dark color="grey-6" />
           <div class="row q-py-md items-center">
             <div class="col-6 flex justify-center">
               <q-knob
@@ -58,33 +58,45 @@
           </div>
         </div>
 
-        <q-separator dark color="grey-6" style="width: 100%" />
+        <q-separator dark color="grey-6" />
 
-        <div class="" ref="workList" style="width: 100%">
+        <div ref="workList">
           <q-list dark separator>
             <q-item
               v-for="(item, i) of log"
               :key="item.startMS"
               clickable
-              @click="
-                editLogIndex = i;
-                logForDialog = item;
-                dialog = true;
-              "
+              dense
             >
-              <q-item-section>{{ item.title }}</q-item-section>
-              <q-item-section avatar>
-                <q-icon name="arrow_forward_ios"></q-icon>
+              <q-item-section
+                @click="updateDialogOpen(i, item)"
+                class="q-py-sm q-my-xs"
+              >
+                {{ item.title }} /
+                {{ timeFromMS(item.studyMS) }}
+              </q-item-section>
+              <q-item-section
+                @click="updateDialogOpen(i, item)"
+                class="q-py-sm q-my-xs"
+                avatar
+                style="align-items: center"
+              >
+                <q-icon name="arrow_forward_ios" />
+              </q-item-section>
+              <q-item-section
+                class="q-ma-sm"
+                style="background-color: #ccc; width: 1px; flex: auto"
+              />
+              <q-item-section
+                @click="deleteDialogOpen(ymd, i)"
+                class="q-py-sm q-my-xs"
+                avatar
+                style="align-items: center; padding-left: 0; min-width: auto"
+              >
+                <q-icon name="delete" />
               </q-item-section>
             </q-item>
-            <q-item
-              clickable
-              @click="
-                editLogIndex = null;
-                logForDialog = null;
-                dialog = true;
-              "
-            >
+            <q-item clickable @click="updateDialogOpen(null, null)">
               <q-item-section class="text-center text-h6 text-weight-light">
                 <q-item-label>
                   Manually Add
@@ -175,7 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import { date, Screen } from 'quasar';
+import { date, Screen, useQuasar } from 'quasar';
 import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { DailyLog } from 'src/types/util.interface';
@@ -184,6 +196,7 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
 
 const store = useLogStore();
+const $q = useQuasar();
 const slide = ref(date.formatDate(Date.now(), 'dd'));
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const shareUrl =
@@ -227,6 +240,24 @@ const recordThisWeek = (): Records[] => {
   return arr;
 };
 const recordArr = ref<Records[]>(recordThisWeek());
+const updateDialogOpen = (index: number | null, item: DailyLog | null) => {
+  editLogIndex.value = index;
+  logForDialog.value = item;
+  dialog.value = true;
+};
+const deleteDialogOpen = (ymd: string, index: number) => {
+  $q.dialog({
+    title: 'Caution !!',
+    message: 'Do you really want to delete the log?',
+    dark: true,
+    cancel: {
+      push: true,
+      color: 'negative',
+    },
+  }).onOk(() => {
+    store.deleteLog(ymd, index);
+  });
+};
 
 provide('close-dialog', () => (dialog.value = false));
 watch(
