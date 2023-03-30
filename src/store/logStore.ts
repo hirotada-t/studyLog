@@ -16,7 +16,7 @@ const insertToEmptyTitle = (
   startMS: number,
   studyMS: number
 ): string => {
-  if (title === '') {
+  if (title === '' || title === null) {
     title = date.formatDate(startMS, 'MM/DD HH:mm ~ ');
     title += date.formatDate(startMS + studyMS, 'HH:mm');
   }
@@ -140,7 +140,7 @@ export const useLogStore = defineStore('log', {
         '2023/03/30',
         [
           {
-            startMS: 0,
+            startMS: 1680165971341,
             studyMS: 3600000,
             title: '1111',
             category: '',
@@ -256,6 +256,12 @@ export const useLogStore = defineStore('log', {
       const log = this.weeklyLogList.get(ymd);
       if (log) {
         log[index] = value;
+      }
+    },
+    deleteLog(ymd: string, index: number) {
+      const log = this.weeklyLogList.get(ymd);
+      if (log) {
+        log.splice(index, 1);
       }
     },
   },
