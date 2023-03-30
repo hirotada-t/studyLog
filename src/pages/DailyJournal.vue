@@ -256,6 +256,7 @@ const deleteDialogOpen = (ymd: string, index: number) => {
     },
   }).onOk(() => {
     store.deleteLog(ymd, index);
+    recordArr.value = recordThisWeek();
   });
 };
 
