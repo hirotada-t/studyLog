@@ -137,6 +137,7 @@
             v-for="(dd, index) of days"
             :key="index"
             style="padding: 0 0.5vw; width: 12%"
+            :style="slide === dd ? 'opacity:1' : 'opacity:.4'"
             padding="none"
           >
             <q-knob
