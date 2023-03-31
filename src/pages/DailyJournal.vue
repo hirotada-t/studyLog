@@ -237,7 +237,6 @@ const recordThisWeek = (): Records[] => {
   for (let i = 0; i < days.length; i++) {
     arr[i] = obj[days[i]];
   }
-  console.log(arr);
   return arr;
 };
 const recordArr = ref<Records[]>(recordThisWeek());
