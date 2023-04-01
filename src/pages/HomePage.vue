@@ -27,13 +27,22 @@
         </div>
         <div class="col-4" v-if="selectedValue.length < 3">
           <q-card
-            @click="selectedValue.push('Explore')"
+            @click="valueDialog = true"
             class="bg333 flex flex-center h-100pc"
             style="border-radius: 15px"
           >
             <q-icon name="add" dark size="xl" />
           </q-card>
         </div>
+
+        <q-dialog v-model="valueDialog">
+          <q-card dark>
+            <q-card-actions>
+              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn text-color="dark" label="OK" color="primary" @click="selectedValue.push('Explore')" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
       <h2 class="q-mb-xs text-h5">
         Your Own Goal
@@ -109,11 +118,27 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
+const $q = useQuasar();
 const selectedValue = ref<string[]>(['Challenge']);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
 const j = ref(1);
+const valueDialog = ref<boolean>(false);
+const goalDialog = ref<boolean>(false);
+const taskDialog = ref<boolean>(false);
+
+const valueDialogOpen = () => {
+  valueDialog.value = true;
+};
+const goalDialogOpen = () => {
+  goalDialog.value = true;
+};
+const taskDialogOpen = () => {
+  taskDialog.value = true;
+};
+// const  = () => {};
 </script>
