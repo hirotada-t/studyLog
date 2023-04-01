@@ -11,8 +11,8 @@
           class="q-ml-md"
         />
       </h2>
-      <div class="row q-col-gutter-sm">
-        <div class="col-4" v-for="(val, index) of valueArr" :key="index">
+      <div class="row q-col-gutter-sm items-stretch">
+        <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
           <q-card class="bg333" style="border-radius: 15px">
             <q-img :src="`/img/values/${val.toLowerCase()}.png`">
               <div
@@ -25,6 +25,30 @@
             </q-img>
           </q-card>
         </div>
+        <div class="col-4" v-if="selectedValue.length < 3">
+          <q-card
+            @click="valueDialogOpen"
+            class="bg333 flex flex-center h-100pc"
+            style="border-radius: 15px"
+          >
+            <q-icon name="add" dark size="xl" />
+          </q-card>
+        </div>
+
+        <q-dialog v-model="valueDialog">
+          <q-card dark>
+            <q-card-actions>
+              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn
+                text-color="dark"
+                label="OK"
+                color="primary"
+                @click="selectedValue.push('Explore')"
+                v-close-popup
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
       <h2 class="q-mb-xs text-h5">
         Your Own Goal
@@ -43,7 +67,7 @@
           style="min-height: auto"
           >{{ val }}</q-item
         >
-        <q-item clickable @click="goalArr.push('goal' + j++)">
+        <q-item clickable @click="goalDialogOpen">
           <q-item-section class="text-center text-h6">
             <q-item-label>
               Add
@@ -86,7 +110,7 @@
             {{ key }}
           </q-checkbox>
         </q-item>
-        <q-item clickable @click="target['task' + i++] = false">
+        <q-item clickable @click="taskDialogOpen">
           <q-item-section class="text-center text-h6">
             <q-item-label>
               Add
@@ -100,11 +124,29 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
-const valueArr = ['Challenge', 'Burning', 'Explore'];
+const $q = useQuasar();
+const selectedValue = ref<string[]>(['Challenge']);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
 const j = ref(1);
+const valueDialog = ref<boolean>(false);
+
+const valueDialogOpen = () => {
+  valueDialog.value = true;
+};
+const goalDialogOpen = () => {
+  $q.dialog({ cancel: true, dark: true }).onOk(() => {
+    goalArr.value.push('goal' + j.value++);
+  });
+};
+const taskDialogOpen = () => {
+  $q.dialog({ cancel: true, dark: true }).onOk(() => {
+    target.value['task' + i.value++] = false;
+  });
+};
+// const  = () => {};
 </script>

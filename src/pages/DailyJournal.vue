@@ -69,31 +69,23 @@
               dense
             >
               <q-item-section
-                @click="updateDialogOpen(i, item)"
-                class="q-py-sm q-my-xs"
-              >
-                {{ item.title }} /
-                {{ timeFromMS(item.studyMS) }}
-              </q-item-section>
-              <q-item-section
-                @click="updateDialogOpen(i, item)"
-                class="q-py-sm q-my-xs"
-                avatar
-                style="align-items: center"
-              >
-                <q-icon name="arrow_forward_ios" />
-              </q-item-section>
-              <q-item-section
-                class="q-ma-sm"
-                style="background-color: #ccc; width: 1px; flex: auto"
-              />
-              <q-item-section
                 @click="deleteDialogOpen(ymd, i)"
-                class="q-py-sm q-my-xs"
+                class="q-px-sm q-my-sm"
                 avatar
                 style="align-items: center; padding-left: 0; min-width: auto"
               >
-                <q-icon name="delete" />
+                <q-icon size="xs" name="delete" />
+              </q-item-section>
+              <q-item-section
+                class="q-mx-sm q-my-xs"
+                style="background-color: #ccc; width: 1px; flex: auto"
+              />
+              <q-item-section @click="updateDialogOpen(i, item)">
+                <div class="flex items-center justify-between">
+                  {{ item.title }} /
+                  {{ timeFromMS(item.studyMS) }}
+                  <q-icon name="arrow_forward_ios" />
+                </div>
               </q-item-section>
             </q-item>
             <q-item clickable @click="updateDialogOpen(null, null)">
@@ -191,7 +183,7 @@
 import { date, Screen, useQuasar } from 'quasar';
 import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
-import { DailyLog } from 'src/types/util.interface';
+import { LogItems } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
@@ -214,16 +206,19 @@ const workList = ref();
 const weeklyData = ref();
 const adoveItemsHeight = 50 + 140;
 const visibleArea = Screen.height - adoveItemsHeight;
-const todayLog = ref<DailyLog[] | undefined>(
+const todayLog = ref<LogItems[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
-const logForDialog = ref<DailyLog | null>(null);
+const logForDialog = ref<LogItems | null>(null);
 const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
 const recordThisWeek = (): Records[] => {
   const arr: Records[] = [];
   const obj: { [key: string]: Records } = {};
 
+  if (store.weeklyLogList.size === 0) {
+    store.initLog();
+  }
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
@@ -240,7 +235,7 @@ const recordThisWeek = (): Records[] => {
   return arr;
 };
 const recordArr = ref<Records[]>(recordThisWeek());
-const updateDialogOpen = (index: number | null, item: DailyLog | null) => {
+const updateDialogOpen = (index: number | null, item: LogItems | null) => {
   editLogIndex.value = index;
   logForDialog.value = item;
   dialog.value = true;

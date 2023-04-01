@@ -1,211 +1,14 @@
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
-import { DailyLog } from 'src/types/util.interface';
+import { State } from 'src/types/store.interface';
+import { LogItems } from 'src/types/util.interface';
+import { createInitArr, insertToEmptyTitle } from 'src/utils/storeFunc';
 
 const timeStamp = Date.now();
 
-type State = {
-  weeklyLogList: Map<string, DailyLog[]>;
-  today: string;
-  dayOfWeek: string;
-  weeklyTarget: number;
-};
-
-const insertToEmptyTitle = (
-  title: string,
-  startMS: number,
-  studyMS: number
-): string => {
-  if (title === '' || title === null) {
-    title = date.formatDate(startMS, 'MM/DD HH:mm ~ ');
-    title += date.formatDate(startMS + studyMS, 'HH:mm');
-  }
-  return title;
-};
-
 export const useLogStore = defineStore('log', {
   state: (): State => ({
-    weeklyLogList: new Map([
-      [
-        '2023/03/26',
-        [
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/03/27',
-        [
-          {
-            startMS: 0,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/03/28',
-        [
-          {
-            startMS: 0,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/03/29',
-        [
-          {
-            startMS: 0,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/03/30',
-        [
-          {
-            startMS: 1680165971341,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/03/31',
-        [
-          {
-            startMS: 0,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-      [
-        '2023/04/01',
-        [
-          {
-            startMS: 0,
-            studyMS: 3600000,
-            title: '1111',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-          {
-            startMS: 100,
-            studyMS: 3600000,
-            title: '2222',
-            category: '',
-            tagList: [],
-            focusLevel: 2,
-            studyContents: '',
-          },
-        ],
-      ],
-    ]),
+    weeklyLogList: new Map(),
     today: date.formatDate(timeStamp, 'YYYY/MM/DD'),
     dayOfWeek: date.formatDate(timeStamp, 'dd'),
     weeklyTarget: 3600000 * 4,
@@ -230,7 +33,12 @@ export const useLogStore = defineStore('log', {
     },
   },
   actions: {
-    setLog(ymd: string, value: DailyLog) {
+    initLog() {
+      const arr = createInitArr();
+      const map = new Map(arr);
+      this.weeklyLogList = map;
+    },
+    setLog(ymd: string, value: LogItems) {
       value.title = insertToEmptyTitle(
         value.title,
         value.startMS,
@@ -245,9 +53,11 @@ export const useLogStore = defineStore('log', {
         this.weeklyLogList.set(this.today, []);
       }
 
-      if (log) log.push(value);
+      if (log) {
+        log.push(value);
+      }
     },
-    updateLog(ymd: string, index: number, value: DailyLog) {
+    updateLog(ymd: string, index: number, value: LogItems) {
       value.title = insertToEmptyTitle(
         value.title,
         value.startMS,
