@@ -11,8 +11,8 @@
           class="q-ml-md"
         />
       </h2>
-      <div class="row q-col-gutter-sm">
-        <div class="col-4" v-for="(val, index) of valueArr" :key="index">
+      <div class="row q-col-gutter-sm items-stretch">
+        <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
           <q-card class="bg333" style="border-radius: 15px">
             <q-img :src="`/img/values/${val.toLowerCase()}.png`">
               <div
@@ -23,6 +23,15 @@
                 {{ val }}
               </div>
             </q-img>
+          </q-card>
+        </div>
+        <div class="col-4" v-if="selectedValue.length < 3">
+          <q-card
+            @click="selectedValue.push('Explore')"
+            class="bg333 flex flex-center h-100pc"
+            style="border-radius: 15px"
+          >
+            <q-icon name="add" dark size="xl" />
           </q-card>
         </div>
       </div>
@@ -102,7 +111,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const valueArr = ['Challenge', 'Burning', 'Explore'];
+const selectedValue = ref<string[]>(['Challenge']);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
