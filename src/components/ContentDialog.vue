@@ -244,7 +244,7 @@ import { date, Screen } from 'quasar';
 import BtnsDailyJournal from 'src/components/parts/dialog/BtnsDailyJournal.vue';
 import BtnsTimerResult from 'src/components/parts/dialog/BtnsTimerResult.vue';
 import { useLogStore } from 'src/store/logStore';
-import { DailyLog } from 'src/types/util.interface';
+import { LogItems } from 'src/types/util.interface';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { timeFromMS, MSFromDateTime } from 'src/utils/timeFormat';
@@ -256,7 +256,7 @@ const props = defineProps<{
   startMS: number;
   timeMS: number;
   pageDate: string;
-  logData: DailyLog | null;
+  logData: LogItems | null;
   editLogIndex: number | null;
 }>();
 
@@ -269,7 +269,7 @@ const dialog = ref<{
   target: 'end',
   time: '',
 });
-const logOfWork = ref<DailyLog>({
+const logOfWork = ref<LogItems>({
   startMS: props.logData
     ? props.logData.startMS
     : Math.floor(props.startMS / (1000 * 60)) * 1000 * 60,

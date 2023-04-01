@@ -183,7 +183,7 @@
 import { date, Screen, useQuasar } from 'quasar';
 import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
-import { DailyLog } from 'src/types/util.interface';
+import { LogItems } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
@@ -206,16 +206,19 @@ const workList = ref();
 const weeklyData = ref();
 const adoveItemsHeight = 50 + 140;
 const visibleArea = Screen.height - adoveItemsHeight;
-const todayLog = ref<DailyLog[] | undefined>(
+const todayLog = ref<LogItems[] | undefined>(
   store.weeklyLogList.get(store.today)
 );
-const logForDialog = ref<DailyLog | null>(null);
+const logForDialog = ref<LogItems | null>(null);
 const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
 const recordThisWeek = (): Records[] => {
   const arr: Records[] = [];
   const obj: { [key: string]: Records } = {};
 
+  if (store.weeklyLogList.size === 0) {
+    store.initLog();
+  }
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
@@ -232,7 +235,7 @@ const recordThisWeek = (): Records[] => {
   return arr;
 };
 const recordArr = ref<Records[]>(recordThisWeek());
-const updateDialogOpen = (index: number | null, item: DailyLog | null) => {
+const updateDialogOpen = (index: number | null, item: LogItems | null) => {
   editLogIndex.value = index;
   logForDialog.value = item;
   dialog.value = true;

@@ -1,4 +1,4 @@
-export type DailyLog = {
+export type LogItems = {
   startMS: number;
   studyMS: number;
   title: string;
