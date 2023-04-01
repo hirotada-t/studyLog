@@ -69,31 +69,23 @@
               dense
             >
               <q-item-section
-                @click="updateDialogOpen(i, item)"
-                class="q-py-sm q-my-xs"
-              >
-                {{ item.title }} /
-                {{ timeFromMS(item.studyMS) }}
-              </q-item-section>
-              <q-item-section
-                @click="updateDialogOpen(i, item)"
-                class="q-py-sm q-my-xs"
-                avatar
-                style="align-items: center"
-              >
-                <q-icon name="arrow_forward_ios" />
-              </q-item-section>
-              <q-item-section
-                class="q-ma-sm"
-                style="background-color: #ccc; width: 1px; flex: auto"
-              />
-              <q-item-section
                 @click="deleteDialogOpen(ymd, i)"
-                class="q-py-sm q-my-xs"
+                class="q-px-sm q-my-sm"
                 avatar
                 style="align-items: center; padding-left: 0; min-width: auto"
               >
-                <q-icon name="delete" />
+                <q-icon size="xs" name="delete" />
+              </q-item-section>
+              <q-item-section
+                class="q-mx-sm q-my-xs"
+                style="background-color: #ccc; width: 1px; flex: auto"
+              />
+              <q-item-section @click="updateDialogOpen(i, item)">
+                <div class="flex items-center justify-between">
+                  {{ item.title }} /
+                  {{ timeFromMS(item.studyMS) }}
+                  <q-icon name="arrow_forward_ios" />
+                </div>
               </q-item-section>
             </q-item>
             <q-item clickable @click="updateDialogOpen(null, null)">
