@@ -335,6 +335,7 @@ const fixTime = () => {
   dialog.value.target = 'end';
 };
 const updateContent = () => {
+
   if (!props.logData) {
     store.setLog(props.pageDate, logOfWork.value);
   } else if (props.editLogIndex || props.editLogIndex === 0) {

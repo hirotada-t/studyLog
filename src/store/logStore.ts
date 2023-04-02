@@ -44,15 +44,14 @@ export const useLogStore = defineStore('log', {
         value.startMS,
         value.studyMS
       );
-
-      const log = this.weeklyLogList.get(ymd);
-      if (this.dayOfWeek === 'Su' && !log) {
-        this.weeklyLogList.clear();
-      }
-      if (!log) {
+      // if (this.dayOfWeek === 'Su' && !log) {
+      //   this.weeklyLogList.clear();
+      // }
+      if (!this.weeklyLogList.get(ymd)) {
         this.weeklyLogList.set(this.today, []);
       }
 
+      const log = this.weeklyLogList.get(ymd);
       if (log) {
         log.push(value);
       }
