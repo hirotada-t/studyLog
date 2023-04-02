@@ -13,7 +13,15 @@
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
         <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
-          <q-card class="bg333" style="border-radius: 15px">
+          <q-card
+            @click="
+              addValue = index;
+              slide = valueImgArr.indexOf(val);
+              valueDialog = true;
+            "
+            class="bg333"
+            style="border-radius: 15px"
+          >
             <q-img :src="`/img/values/${val.toLowerCase()}.png`">
               <div
                 class="absolute-bottom text-center"
@@ -28,7 +36,7 @@
         <div class="col-4" v-if="selectedValue.length < 3">
           <q-card
             id="valueBtn"
-            @click="valueDialogOpen"
+            @click="valueDialog = true"
             class="bg333 flex flex-center"
             style="border-radius: 15px"
             :style="`height: ${valueBtnHeight}px;`"
@@ -77,10 +85,7 @@
                 text-color="dark"
                 label="OK"
                 color="primary"
-                @click="
-                  selectedValue.push(valueImgArr[slide]);
-                  slide = 0;
-                "
+                @click="updateValueImg"
                 v-close-popup
               />
             </q-card-actions>
@@ -169,14 +174,20 @@ const $q = useQuasar();
 const slide = ref(0);
 const valueBtnHeight = ref<number>(0);
 const selectedValue = ref<string[]>([]);
+const addValue = ref<true | number>(true);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
 const j = ref(1);
 const valueDialog = ref<boolean>(false);
 
-const valueDialogOpen = () => {
-  valueDialog.value = true;
+const updateValueImg = () => {
+  if (typeof addValue.value === 'number') {
+    selectedValue.value[addValue.value] = valueImgArr[slide.value];
+  } else {
+    selectedValue.value.push(valueImgArr[slide.value]);
+  }
+  slide.value = 0;
 };
 const goalDialogOpen = () => {
   $q.dialog({ cancel: true, dark: true }).onOk(() => {
