@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { date, Screen, useQuasar } from 'quasar';
+import { date, Screen } from 'quasar';
 import WorkContent from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { LogItems } from 'src/types/util.interface';
@@ -190,7 +190,6 @@ import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
 import { deleteDialog } from 'src/utils/func';
 
 const store = useLogStore();
-const $q = useQuasar();
 const slide = ref(date.formatDate(Date.now(), 'dd'));
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const shareUrl =

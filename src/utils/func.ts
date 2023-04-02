@@ -1,8 +1,7 @@
-import { useQuasar } from 'quasar';
+import { Dialog } from 'quasar';
 
-const $q = useQuasar();
 export const deleteDialog = (callback: () => void) => {
-  $q.dialog({
+  Dialog.create({
     title: 'Alert',
     message: 'Do you really want to delete?',
     dark: true,
