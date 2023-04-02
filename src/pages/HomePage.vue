@@ -47,7 +47,7 @@
 
         <q-dialog v-model="valueDialog" full-width>
           <q-card dark>
-            <q-card-sections>
+            <q-card-section>
               <q-carousel
                 transition-prev="slide-right"
                 transition-next="slide-left"
@@ -75,7 +75,7 @@
                   {{ valueImgArr[slide] }}
                 </q-carousel-slide>
               </q-carousel>
-            </q-card-sections>
+            </q-card-section>
 
             <q-separator dark inset />
 
