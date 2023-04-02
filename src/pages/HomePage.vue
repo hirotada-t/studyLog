@@ -61,18 +61,21 @@
                 control-type="regular"
                 navigation-icon="radio_button_unchecked"
                 padding
-                height="calc((100vw - 24px * 2) * 0.8)"
+                height="calc((100vw - 24px * 2 - 16px * 2) * 0.8)"
                 class="bg-dark rounded-borders valueCarousel"
               >
                 <q-carousel-slide
                   v-for="(val, index) of valueImgArr"
                   :key="index"
                   :name="index"
-                  class="text-h3 text-center column no-wrap justify-end"
+                  class="column no-wrap justify-end"
                   :class="val === 'Burning' ? '' : 'text-dark'"
                   :img-src="`/img/values/${val.toLowerCase()}.png`"
+                  style="padding-right: 0; padding-left: 0"
                 >
-                  {{ valueImgArr[slide] }}
+                  <div class="text-h4 text-weight-bold text-center">
+                    {{ valueImgArr[slide] }}
+                  </div>
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>
@@ -80,13 +83,29 @@
             <q-separator dark inset />
 
             <q-card-actions align="center" class="q-py-md">
-              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn
+                flat
+                icon="delete"
+                v-if="typeof addValue === 'number'"
+                round
+                @click="deleteValue"
+              />
+              <q-btn
+                flat
+                label="Cancel"
+                color="primary"
+                @click="
+                  valueDialog = false;
+                  addValue = true;
+                  slide = 0;
+                "
+              />
               <q-btn
                 text-color="dark"
                 label="OK"
                 color="primary"
                 @click="updateValueImg"
-                v-close-popup
+                class="col-7"
               />
             </q-card-actions>
           </q-card>
@@ -187,7 +206,31 @@ const updateValueImg = () => {
   } else {
     selectedValue.value.push(valueImgArr[slide.value]);
   }
+  valueDialog.value = false;
+  addValue.value = true;
   slide.value = 0;
+};
+const deleteValue = () => {
+  $q.dialog({
+    title: 'Alert',
+    message: 'Do you really want to delete?',
+    dark: true,
+    ok: {
+      flat: true,
+      color: '#ccc',
+    },
+    cancel: {
+      push: true,
+      color: 'negative',
+    },
+  }).onOk(() => {
+    if (typeof addValue.value === 'number') {
+      selectedValue.value.splice(addValue.value, 1);
+    }
+    valueDialog.value = false;
+    addValue.value = true;
+    slide.value = 0;
+  });
 };
 const goalDialogOpen = () => {
   $q.dialog({ cancel: true, dark: true }).onOk(() => {

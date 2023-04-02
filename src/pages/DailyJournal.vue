@@ -240,9 +240,13 @@ const updateDialogOpen = (index: number | null, item: LogItems | null) => {
 };
 const deleteDialogOpen = (ymd: string, index: number) => {
   $q.dialog({
-    title: 'Caution !!',
-    message: 'Do you really want to delete the log?',
+    title: 'Alert',
+    message: 'Do you really want to delete?',
     dark: true,
+    ok: {
+      flat: true,
+      color: '#ccc',
+    },
     cancel: {
       push: true,
       color: 'negative',
