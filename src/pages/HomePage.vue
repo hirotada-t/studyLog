@@ -186,6 +186,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import { deleteDialog } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
 const valueImgArr = ['Challenge', 'Burning', 'Explore'];
@@ -211,19 +212,7 @@ const updateValueImg = () => {
   slide.value = 0;
 };
 const deleteValue = () => {
-  $q.dialog({
-    title: 'Alert',
-    message: 'Do you really want to delete?',
-    dark: true,
-    ok: {
-      flat: true,
-      color: '#ccc',
-    },
-    cancel: {
-      push: true,
-      color: 'negative',
-    },
-  }).onOk(() => {
+  deleteDialog(() => {
     if (typeof addValue.value === 'number') {
       selectedValue.value.splice(addValue.value, 1);
     }

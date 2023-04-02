@@ -187,6 +187,7 @@ import { LogItems } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
+import { deleteDialog } from 'src/utils/func';
 
 const store = useLogStore();
 const $q = useQuasar();
@@ -239,19 +240,7 @@ const updateDialogOpen = (index: number | null, item: LogItems | null) => {
   dialog.value = true;
 };
 const deleteDialogOpen = (ymd: string, index: number) => {
-  $q.dialog({
-    title: 'Alert',
-    message: 'Do you really want to delete?',
-    dark: true,
-    ok: {
-      flat: true,
-      color: '#ccc',
-    },
-    cancel: {
-      push: true,
-      color: 'negative',
-    },
-  }).onOk(() => {
+  deleteDialog(() => {
     store.deleteLog(ymd, index);
     recordArr.value = recordThisWeek();
   });
