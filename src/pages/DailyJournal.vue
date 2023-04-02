@@ -38,7 +38,7 @@
             </div>
             <div class="col-4 text-center">
               <h3 class="q-my-none text-h5">
-                {{ timeFromMS(store.getAdayTotalHoursMS(ymd)) }}
+                {{ timeFromMS(store.getDailyTotalHoursMS(ymd)) }}
               </h3>
               <p>Daily total</p>
               <h3 class="q-my-none text-h5">
@@ -198,17 +198,15 @@ const shareUrl =
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
 const carousel = ref();
 const dialog = ref<boolean>(false);
-const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
+const dailyTotalHoursMS = ref<number>(store.getDailyTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
 const doc = ref();
 const dailyData = ref();
 const workList = ref();
 const weeklyData = ref();
-const adoveItemsHeight = 50 + 140;
-const visibleArea = Screen.height - adoveItemsHeight;
-const todayLog = ref<LogItems[] | undefined>(
-  store.weeklyLogList.get(store.today)
-);
+const aboveItemsHeight = 50 + 140;
+const visibleArea = Screen.height - aboveItemsHeight;
+const todayLog = ref<LogItems[]>();
 const logForDialog = ref<LogItems | null>(null);
 const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
@@ -222,7 +220,7 @@ const recordThisWeek = (): Records[] => {
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
-    const rate = (store.getAdayTotalHoursMS(key) * 100) / store.weeklyTarget;
+    const rate = (store.getDailyTotalHoursMS(key) * 100) / store.weeklyTarget;
     obj[dd] = {
       date: dMS,
       rate: rate,

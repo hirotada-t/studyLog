@@ -20,7 +20,7 @@ export const useLogStore = defineStore('log', {
     getRecordOfWeek: () => {
       console.log();
     },
-    getAdayTotalHoursMS: (state) => {
+    getDailyTotalHoursMS: (state) => {
       return (date: string): number => {
         const arr = state.weeklyLogList.get(date);
         let res = 0;
