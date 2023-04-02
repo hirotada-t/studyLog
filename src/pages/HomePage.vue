@@ -13,7 +13,15 @@
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
         <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
-          <q-card class="bg333" style="border-radius: 15px">
+          <q-card
+            @click="
+              addValue = index;
+              slide = valueImgArr.indexOf(val);
+              valueDialog = true;
+            "
+            class="bg333"
+            style="border-radius: 15px"
+          >
             <q-img :src="`/img/values/${val.toLowerCase()}.png`">
               <div
                 class="absolute-bottom text-center"
@@ -27,24 +35,77 @@
         </div>
         <div class="col-4" v-if="selectedValue.length < 3">
           <q-card
-            @click="valueDialogOpen"
-            class="bg333 flex flex-center h-100pc"
+            id="valueBtn"
+            @click="valueDialog = true"
+            class="bg333 flex flex-center"
             style="border-radius: 15px"
+            :style="`height: ${valueBtnHeight}px;`"
           >
             <q-icon name="add" dark size="xl" />
           </q-card>
         </div>
 
-        <q-dialog v-model="valueDialog">
+        <q-dialog v-model="valueDialog" full-width>
           <q-card dark>
-            <q-card-actions>
-              <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-card-section>
+              <q-carousel
+                transition-prev="slide-right"
+                transition-next="slide-left"
+                swipeable
+                animated
+                arrows
+                infinite
+                v-model="slide"
+                control-color="dark"
+                control-text-color="white"
+                control-type="regular"
+                navigation-icon="radio_button_unchecked"
+                padding
+                height="calc((100vw - 24px * 2 - 16px * 2) * 0.8)"
+                class="bg-dark rounded-borders valueCarousel"
+              >
+                <q-carousel-slide
+                  v-for="(val, index) of valueImgArr"
+                  :key="index"
+                  :name="index"
+                  class="column no-wrap justify-end"
+                  :class="val === 'Burning' ? '' : 'text-dark'"
+                  :img-src="`/img/values/${val.toLowerCase()}.png`"
+                  style="padding-right: 0; padding-left: 0"
+                >
+                  <div class="text-h4 text-weight-bold text-center">
+                    {{ valueImgArr[slide] }}
+                  </div>
+                </q-carousel-slide>
+              </q-carousel>
+            </q-card-section>
+
+            <q-separator dark inset />
+
+            <q-card-actions align="center" class="q-py-md">
+              <q-btn
+                flat
+                icon="delete"
+                v-if="typeof addValue === 'number'"
+                round
+                @click="deleteValue"
+              />
+              <q-btn
+                flat
+                label="Cancel"
+                color="primary"
+                @click="
+                  valueDialog = false;
+                  addValue = true;
+                  slide = 0;
+                "
+              />
               <q-btn
                 text-color="dark"
                 label="OK"
                 color="primary"
-                @click="selectedValue.push('Explore')"
-                v-close-popup
+                @click="updateValueImg"
+                class="col-7"
               />
             </q-card-actions>
           </q-card>
@@ -125,18 +186,40 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { deleteDialog } from 'src/utils/func';
+import { ref, onMounted } from 'vue';
 
+const valueImgArr = ['Challenge', 'Burning', 'Explore'];
 const $q = useQuasar();
-const selectedValue = ref<string[]>(['Challenge']);
+const slide = ref(0);
+const valueBtnHeight = ref<number>(0);
+const selectedValue = ref<string[]>([]);
+const addValue = ref<true | number>(true);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
 const j = ref(1);
 const valueDialog = ref<boolean>(false);
 
-const valueDialogOpen = () => {
-  valueDialog.value = true;
+const updateValueImg = () => {
+  if (typeof addValue.value === 'number') {
+    selectedValue.value[addValue.value] = valueImgArr[slide.value];
+  } else {
+    selectedValue.value.push(valueImgArr[slide.value]);
+  }
+  valueDialog.value = false;
+  addValue.value = true;
+  slide.value = 0;
+};
+const deleteValue = () => {
+  deleteDialog(() => {
+    if (typeof addValue.value === 'number') {
+      selectedValue.value.splice(addValue.value, 1);
+    }
+    valueDialog.value = false;
+    addValue.value = true;
+    slide.value = 0;
+  });
 };
 const goalDialogOpen = () => {
   $q.dialog({ cancel: true, dark: true }).onOk(() => {
@@ -149,4 +232,11 @@ const taskDialogOpen = () => {
   });
 };
 // const  = () => {};
+
+onMounted(() => {
+  const btn = document.getElementById('valueBtn');
+  if (btn) {
+    valueBtnHeight.value = btn.clientWidth * 0.8;
+  }
+});
 </script>

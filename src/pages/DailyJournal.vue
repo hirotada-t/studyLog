@@ -38,7 +38,7 @@
             </div>
             <div class="col-4 text-center">
               <h3 class="q-my-none text-h5">
-                {{ timeFromMS(store.getAdayTotalHoursMS(ymd)) }}
+                {{ timeFromMS(store.getDailyTotalHoursMS(ymd)) }}
               </h3>
               <p>Daily total</p>
               <h3 class="q-my-none text-h5">
@@ -103,7 +103,7 @@
             full-width
             class="result-window"
           >
-            <WorkContent
+            <ContentDialog
               :pageDate="ymd"
               :startMS="
                 MSFromDateTime(ymd, date.formatDate(Date.now(), 'HH:mm'))
@@ -180,16 +180,16 @@
 </template>
 
 <script setup lang="ts">
-import { date, Screen, useQuasar } from 'quasar';
-import WorkContent from 'src/components/ContentDialog.vue';
+import { date, Screen } from 'quasar';
+import ContentDialog from 'src/components/ContentDialog.vue';
 import { useLogStore } from 'src/store/logStore';
 import { LogItems } from 'src/types/util.interface';
 import { ref, onMounted, watch, provide } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { MSFromDateTime, timeFromMS } from 'src/utils/timeFormat';
+import { deleteDialog } from 'src/utils/func';
 
 const store = useLogStore();
-const $q = useQuasar();
 const slide = ref(date.formatDate(Date.now(), 'dd'));
 const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const shareUrl =
@@ -198,17 +198,15 @@ const shareUrl =
   '時間勉強しました&hashtags=StudyLog,毎日コツコツ';
 const carousel = ref();
 const dialog = ref<boolean>(false);
-const dailyTotalHoursMS = ref<number>(store.getAdayTotalHoursMS(store.today));
+const dailyTotalHoursMS = ref<number>(store.getDailyTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
 const doc = ref();
 const dailyData = ref();
 const workList = ref();
 const weeklyData = ref();
-const adoveItemsHeight = 50 + 140;
-const visibleArea = Screen.height - adoveItemsHeight;
-const todayLog = ref<LogItems[] | undefined>(
-  store.weeklyLogList.get(store.today)
-);
+const aboveItemsHeight = 50 + 140;
+const visibleArea = Screen.height - aboveItemsHeight;
+const todayLog = ref<LogItems[]>();
 const logForDialog = ref<LogItems | null>(null);
 const editLogIndex = ref<number | null>(null);
 type Records = { date: number; rate: number };
@@ -222,7 +220,7 @@ const recordThisWeek = (): Records[] => {
   store.weeklyLogList.forEach((value, key) => {
     const dMS = new Date(key).getTime();
     const dd = date.formatDate(dMS, 'dd');
-    const rate = (store.getAdayTotalHoursMS(key) * 100) / store.weeklyTarget;
+    const rate = (store.getDailyTotalHoursMS(key) * 100) / store.weeklyTarget;
     obj[dd] = {
       date: dMS,
       rate: rate,
@@ -241,15 +239,7 @@ const updateDialogOpen = (index: number | null, item: LogItems | null) => {
   dialog.value = true;
 };
 const deleteDialogOpen = (ymd: string, index: number) => {
-  $q.dialog({
-    title: 'Caution !!',
-    message: 'Do you really want to delete the log?',
-    dark: true,
-    cancel: {
-      push: true,
-      color: 'negative',
-    },
-  }).onOk(() => {
+  deleteDialog(() => {
     store.deleteLog(ymd, index);
     recordArr.value = recordThisWeek();
   });
