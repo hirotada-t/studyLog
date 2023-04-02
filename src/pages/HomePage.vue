@@ -37,15 +37,50 @@
           </q-card>
         </div>
 
-        <q-dialog v-model="valueDialog">
+        <q-dialog v-model="valueDialog" full-width>
           <q-card dark>
-            <q-card-actions>
+            <q-card-sections>
+              <q-carousel
+                transition-prev="slide-right"
+                transition-next="slide-left"
+                swipeable
+                animated
+                arrows
+                infinite
+                v-model="slide"
+                control-color="dark"
+                control-text-color="white"
+                control-type="regular"
+                navigation-icon="radio_button_unchecked"
+                padding
+                height="calc((100vw - 24px * 2) * 0.8)"
+                class="bg-dark rounded-borders valueCarousel"
+              >
+                <q-carousel-slide
+                  v-for="(val, index) of valueImgArr"
+                  :key="index"
+                  :name="index"
+                  class="text-h3 text-center column no-wrap justify-end"
+                  :class="val === 'Burning' ? '' : 'text-dark'"
+                  :img-src="`/img/values/${val.toLowerCase()}.png`"
+                >
+                  {{ valueImgArr[slide] }}
+                </q-carousel-slide>
+              </q-carousel>
+            </q-card-sections>
+
+            <q-separator dark inset />
+
+            <q-card-actions align="center" class="q-py-md">
               <q-btn flat label="Cancel" color="primary" v-close-popup />
               <q-btn
                 text-color="dark"
                 label="OK"
                 color="primary"
-                @click="selectedValue.push('Explore')"
+                @click="
+                  selectedValue.push(valueImgArr[slide]);
+                  slide = 0;
+                "
                 v-close-popup
               />
             </q-card-actions>
@@ -129,7 +164,9 @@
 import { useQuasar } from 'quasar';
 import { ref, onMounted } from 'vue';
 
+const valueImgArr = ['Challenge', 'Burning', 'Explore'];
 const $q = useQuasar();
+const slide = ref(0);
 const valueBtnHeight = ref<number>(0);
 const selectedValue = ref<string[]>([]);
 const goalArr = ref<string[]>([]);
