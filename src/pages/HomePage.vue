@@ -27,9 +27,11 @@
         </div>
         <div class="col-4" v-if="selectedValue.length < 3">
           <q-card
+            id="valueBtn"
             @click="valueDialogOpen"
-            class="bg333 flex flex-center h-100pc"
+            class="bg333 flex flex-center"
             style="border-radius: 15px"
+            :style="`height: ${valueBtnHeight}px;`"
           >
             <q-icon name="add" dark size="xl" />
           </q-card>
@@ -125,10 +127,11 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const $q = useQuasar();
-const selectedValue = ref<string[]>(['Challenge']);
+const valueBtnHeight = ref<number>(0);
+const selectedValue = ref<string[]>([]);
 const goalArr = ref<string[]>([]);
 const target = ref<{ [key: string]: boolean }>({});
 const i = ref(1);
@@ -149,4 +152,11 @@ const taskDialogOpen = () => {
   });
 };
 // const  = () => {};
+
+onMounted(() => {
+  const btn = document.getElementById('valueBtn');
+  if (btn) {
+    valueBtnHeight.value = btn.clientWidth * 0.8;
+  }
+});
 </script>
