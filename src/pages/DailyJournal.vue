@@ -74,7 +74,7 @@
                 avatar
                 style="align-items: center; padding-left: 0; min-width: auto"
               >
-                <q-icon size="xs" name="delete" />
+                <q-btn icon="fa-regular fa-trash-can" padding="none" flat size="sm" />
               </q-item-section>
               <q-item-section
                 class="q-mx-sm q-my-xs"

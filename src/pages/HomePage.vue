@@ -89,7 +89,7 @@
             <q-card-actions align="center" class="q-py-md">
               <q-btn
                 flat
-                icon="delete"
+                icon="fa-regular fa-trash-can"
                 v-if="typeof editMyValues === 'number'"
                 round
                 @click="deleteValue"
@@ -116,7 +116,7 @@
         </q-dialog>
       </div>
       <h2 class="q-mb-xs text-h5">
-        Your Own Goal
+        Your Own Goal<span class="q-ml-sm text-body2">(up to 3)</span>
         <q-btn
           icon="mdi-help-circle-outline"
           round
@@ -125,22 +125,31 @@
           class="q-ml-md"
         />
       </h2>
-      <q-list dense>
+      <q-list dense dark separator>
         <q-item
           v-for="(val, index) of selectedGoalArr"
           :key="index"
+          class="flex items-center text-h5 text-weight-light"
           style="min-height: auto"
-          >{{ val }}</q-item
         >
+          <q-btn
+            @click="deleteGoal(index)"
+            icon="fa-regular fa-trash-can"
+            padding="0 sm 0 0"
+            flat
+            size="sm"
+          />
+          {{ '/ ' + val }}
+        </q-item>
         <q-item
           clickable
+          v-if="selectedGoalArr.length < 3"
           @click="
-            setTMPGoalArr = JSON.parse(JSON.stringify(selectedGoalArr));
             aGoalInput = '';
             goalsDialogOpen = true;
           "
         >
-          <q-item-section class="text-center text-h6">
+          <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
               Add
               <q-icon name="add" />
@@ -150,46 +159,27 @@
         <q-dialog v-model="goalsDialogOpen" full-width>
           <q-card dark>
             <q-card-section>
-              <q-list dense>
-                <q-item
-                  v-for="(val, index) of setTMPGoalArr"
-                  :key="index"
-                  style="min-height: auto"
-                  >{{ val }}</q-item
-                >
-              </q-list>
+              <div class="text-h6">Create New Goal</div>
             </q-card-section>
+
             <q-card-section align="center">
-              <form @submit.prevent.stop="onAddGoal">
-                <div class="flex flex-center">
-                  <q-input
-                    ref="goalRef"
-                    dark
-                    clearable
-                    filled
-                    hide-bottom-space
-                    v-model="aGoalInput"
-                    class="col"
-                    lazy-rules
-                    :rules="[
-                      (val) =>
-                        (val && setTMPGoalArr.length < 3) ||
-                        'Please type something',
-                    ]"
-                  />
-                  <q-btn type="submit" icon="add" padding="0 0 0 sm" />
-                </div>
-              </form>
+              <q-input
+                ref="goalRef"
+                dark
+                clearable
+                filled
+                hide-bottom-space
+                v-model="aGoalInput"
+                class="col"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
+              />
             </q-card-section>
 
             <q-card-actions align="center">
-              <q-btn
-                @click="setTMPGoalArr.splice(0)"
-                flat
-                label="cancel"
-                color="primary"
-                v-close-popup
-              />
+              <q-btn flat label="cancel" color="primary" v-close-popup />
               <q-btn
                 @click="onDecidedGoal()"
                 flat
@@ -202,7 +192,7 @@
         </q-dialog>
       </q-list>
       <h2 class="q-mb-xs text-h5">
-        Weekly Tasks
+        Weekly Tasks<span class="q-ml-sm text-body2">(up to 5)</span>
         <q-btn
           icon="mdi-help-circle-outline"
           round
@@ -262,7 +252,6 @@ const valuesDialogOpen = ref<boolean>(false);
 const editMyValues = ref<number | null>(null);
 const goalsDialogOpen = ref<boolean>(false);
 const selectedGoalArr = ref<string[]>([]);
-const setTMPGoalArr = ref<string[]>([]);
 const aGoalInput = ref<string>('');
 const goalRef = ref();
 const target = ref<{ [key: string]: boolean }>({});
@@ -288,21 +277,17 @@ const deleteValue = () => {
     slide.value = 0;
   });
 };
-const onAddGoal = () => {
-  if (validateGoalInput()) return;
-  setTMPGoalArr.value.push(aGoalInput.value);
-  aGoalInput.value = '';
-  goalRef.value.resetValidation();
-};
 const onDecidedGoal = () => {
-  if (validateGoalInput() && setTMPGoalArr.value.length === 0) return;
-  onAddGoal();
-  selectedGoalArr.value = JSON.parse(JSON.stringify(setTMPGoalArr.value));
+  goalRef.value.validate();
+  if (goalRef.value.hasError) return;
+  selectedGoalArr.value.push(aGoalInput.value);
+  goalRef.value.resetValidation();
   goalsDialogOpen.value = false;
 };
-const validateGoalInput = (): boolean => {
-  goalRef.value.validate();
-  return goalRef.value.hasError;
+const deleteGoal = (index: number) => {
+  deleteDialog(() => {
+    selectedGoalArr.value.splice(index, 1);
+  });
 };
 const taskDialogOpen = () => {
   $q.dialog({ cancel: true, dark: true }).onOk(() => {
