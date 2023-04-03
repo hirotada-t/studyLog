@@ -144,10 +144,7 @@
         <q-item
           clickable
           v-if="selectedGoalArr.length < 3"
-          @click="
-            aGoalInput = '';
-            goalsDialogOpen = true;
-          "
+          @click="goalsDialogOpen"
         >
           <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
@@ -156,40 +153,6 @@
             </q-item-label>
           </q-item-section>
         </q-item>
-        <q-dialog v-model="goalsDialogOpen" full-width>
-          <q-card dark>
-            <q-card-section>
-              <div class="text-h6">Create New Goal.</div>
-            </q-card-section>
-
-            <q-card-section align="center">
-              <q-input
-                ref="goalRef"
-                dark
-                clearable
-                filled
-                hide-bottom-space
-                v-model="aGoalInput"
-                class="col"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
-                ]"
-              />
-            </q-card-section>
-
-            <q-card-actions align="center">
-              <q-btn flat label="cancel" color="primary" v-close-popup />
-              <q-btn
-                @click="onDecidedGoal()"
-                flat
-                label="OK"
-                color="dark"
-                class="bg-primary text-bold"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
       </q-list>
       <h2 class="q-mb-xs text-h5">
         Weekly Tasks<span class="q-ml-sm text-body2">(up to 5)</span>
@@ -244,21 +207,17 @@
 </template>
 
 <script setup lang="ts">
-import { Screen, useQuasar } from 'quasar';
-import { deleteDialog } from 'src/utils/func';
+import { Screen } from 'quasar';
+import { deleteDialog, createNewTargetDialog } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
 const valueImgArr = ['Challenge', 'Burning', 'Explore'];
-const $q = useQuasar();
 const slide = ref<number>(0);
 const valueBtnHeight = ref<number>(0);
 const selectedValueArr = ref<string[]>([]);
 const valuesDialogOpen = ref<boolean>(false);
 const editMyValues = ref<number | null>(null);
-const goalsDialogOpen = ref<boolean>(false);
 const selectedGoalArr = ref<string[]>([]);
-const aGoalInput = ref<string>('');
-const goalRef = ref();
 const weeklyTargetArr = ref<{ [key: string]: boolean }>({});
 
 const updateValueImg = () => {
@@ -281,12 +240,10 @@ const deleteValue = () => {
     slide.value = 0;
   });
 };
-const onDecidedGoal = () => {
-  goalRef.value.validate();
-  if (goalRef.value.hasError) return;
-  selectedGoalArr.value.push(aGoalInput.value);
-  goalRef.value.resetValidation();
-  goalsDialogOpen.value = false;
+const goalsDialogOpen = () => {
+  createNewTargetDialog('Goal', (data) => {
+    selectedGoalArr.value.push(data);
+  });
 };
 const deleteGoal = (index: number) => {
   deleteDialog(() => {
@@ -294,22 +251,7 @@ const deleteGoal = (index: number) => {
   });
 };
 const taskDialogOpen = () => {
-  $q.dialog({
-    dark: true,
-    title: 'Create New Task.',
-    prompt: {
-      model: '',
-      isValid: (val) => val.length !== 0,
-      type: 'text',
-    },
-    ok: {
-      color: 'dark',
-      flat: true,
-      Style: 'background-color:#ffb31a;',
-    },
-    cancel: true,
-    class: 'btns-center',
-  }).onOk((data) => {
+  createNewTargetDialog('Task', (data) => {
     weeklyTargetArr.value[data] = false;
   });
 };
