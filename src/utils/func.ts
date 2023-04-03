@@ -17,3 +17,26 @@ export const deleteDialog = (callback: () => void) => {
     callback();
   });
 };
+export const createNewTargetDialog = (
+  title: string,
+  callback: (data: string) => void
+) => {
+  Dialog.create({
+    title: `Create New ${title}.`,
+    dark: true,
+    prompt: {
+      model: '',
+      isValid: (val) => val.length !== 0,
+      type: 'text',
+    },
+    ok: {
+      color: 'dark',
+      flat: true,
+      Style: 'background-color:#ffb31a;',
+    },
+    cancel: true,
+    class: 'btns-center',
+  }).onOk((data) => {
+    callback(data);
+  });
+};

@@ -12,12 +12,16 @@
         />
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
-        <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
+        <div
+          class="col-4"
+          v-for="(val, index) of selectedValueArr"
+          :key="index"
+        >
           <q-card
             @click="
-              addValue = index;
+              editMyValues = index;
               slide = valueImgArr.indexOf(val);
-              valueDialog = true;
+              valuesDialogOpen = true;
             "
             class="bg333"
             style="border-radius: 15px"
@@ -33,10 +37,10 @@
             </q-img>
           </q-card>
         </div>
-        <div class="col-4" v-if="selectedValue.length < 3">
+        <div class="col-4" v-if="selectedValueArr.length < 3">
           <q-card
             id="valueBtn"
-            @click="valueDialog = true"
+            @click="valuesDialogOpen = true"
             class="bg333 flex flex-center"
             style="border-radius: 15px"
             :style="`height: ${valueBtnHeight}px;`"
@@ -45,7 +49,7 @@
           </q-card>
         </div>
 
-        <q-dialog v-model="valueDialog" full-width>
+        <q-dialog v-model="valuesDialogOpen" full-width>
           <q-card dark>
             <q-card-section>
               <q-carousel
@@ -85,8 +89,8 @@
             <q-card-actions align="center" class="q-py-md">
               <q-btn
                 flat
-                icon="delete"
-                v-if="typeof addValue === 'number'"
+                icon="fa-regular fa-trash-can"
+                v-if="typeof editMyValues === 'number'"
                 round
                 @click="deleteValue"
               />
@@ -95,8 +99,8 @@
                 label="Cancel"
                 color="primary"
                 @click="
-                  valueDialog = false;
-                  addValue = true;
+                  valuesDialogOpen = false;
+                  editMyValues = null;
                   slide = 0;
                 "
               />
@@ -112,7 +116,7 @@
         </q-dialog>
       </div>
       <h2 class="q-mb-xs text-h5">
-        Your Own Goal
+        Your Own Goal<span class="q-ml-sm text-body2">(up to 3)</span>
         <q-btn
           icon="mdi-help-circle-outline"
           round
@@ -121,15 +125,28 @@
           class="q-ml-md"
         />
       </h2>
-      <q-list dense>
+      <q-list dense dark separator>
         <q-item
-          v-for="(val, index) of goalArr"
+          v-for="(val, index) of selectedGoalArr"
           :key="index"
+          class="flex items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
-          >{{ val }}</q-item
         >
-        <q-item clickable @click="goalDialogOpen">
-          <q-item-section class="text-center text-h6">
+          {{ val }}
+          <q-btn
+            @click="deleteGoal(index)"
+            icon="fa-regular fa-trash-can"
+            padding="none"
+            flat
+            size="sm"
+          />
+        </q-item>
+        <q-item
+          clickable
+          v-if="selectedGoalArr.length < 3"
+          @click="goalsDialogOpen"
+        >
+          <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
               Add
               <q-icon name="add" />
@@ -138,7 +155,7 @@
         </q-item>
       </q-list>
       <h2 class="q-mb-xs text-h5">
-        Weekly Tasks
+        Weekly Tasks<span class="q-ml-sm text-body2">(up to 5)</span>
         <q-btn
           icon="mdi-help-circle-outline"
           round
@@ -147,32 +164,43 @@
           class="q-ml-md"
         />
       </h2>
-      <q-list dense>
+      <q-list dark separator>
         <q-item
           clickable
-          v-for="(val, key, index) of target"
-          :key="index"
-          class="items-center"
+          v-for="(val, key) of weeklyTaskList"
+          :key="key"
+          class="items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
-          :style="
-            !val
-              ? ''
-              : 'text-decoration:line-through;text-decoration-style:double;'
-          "
-          @click="target[key] = !target[key]"
         >
           <q-checkbox
-            v-model="target[key]"
+            v-model="weeklyTaskList[key]"
             color="green"
             dense
             class="q-pr-sm"
             dark
+            :style="!val ? '' : 'text-decoration:line-through double #ff4040;'"
           >
-            {{ key }}
+            <div
+              class="overflow-eclipse"
+              :style="`width: ${-80 + Screen.width - 40}px;`"
+            >
+              {{ key }}
+            </div>
           </q-checkbox>
+          <q-btn
+            @click="deleteTask(key.toString())"
+            icon="fa-regular fa-trash-can"
+            padding="0 sm 0 0"
+            flat
+            size="sm"
+          />
         </q-item>
-        <q-item clickable @click="taskDialogOpen">
-          <q-item-section class="text-center text-h6">
+        <q-item
+          clickable
+          v-if="Object.keys(weeklyTaskList).length < 5"
+          @click="taskDialogOpen"
+        >
+          <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
               Add
               <q-icon name="add" />
@@ -185,53 +213,59 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
-import { deleteDialog } from 'src/utils/func';
+import { Screen } from 'quasar';
+import { deleteDialog, createNewTargetDialog } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
 const valueImgArr = ['Challenge', 'Burning', 'Explore'];
-const $q = useQuasar();
-const slide = ref(0);
+const slide = ref<number>(0);
 const valueBtnHeight = ref<number>(0);
-const selectedValue = ref<string[]>([]);
-const addValue = ref<true | number>(true);
-const goalArr = ref<string[]>([]);
-const target = ref<{ [key: string]: boolean }>({});
-const i = ref(1);
-const j = ref(1);
-const valueDialog = ref<boolean>(false);
+const selectedValueArr = ref<string[]>([]);
+const valuesDialogOpen = ref<boolean>(false);
+const editMyValues = ref<number | null>(null);
+const selectedGoalArr = ref<string[]>([]);
+const weeklyTaskList = ref<{ [key: string]: boolean }>({});
 
 const updateValueImg = () => {
-  if (typeof addValue.value === 'number') {
-    selectedValue.value[addValue.value] = valueImgArr[slide.value];
+  if (typeof editMyValues.value === 'number') {
+    selectedValueArr.value[editMyValues.value] = valueImgArr[slide.value];
   } else {
-    selectedValue.value.push(valueImgArr[slide.value]);
+    selectedValueArr.value.push(valueImgArr[slide.value]);
   }
-  valueDialog.value = false;
-  addValue.value = true;
+  valuesDialogOpen.value = false;
+  editMyValues.value = null;
   slide.value = 0;
 };
 const deleteValue = () => {
   deleteDialog(() => {
-    if (typeof addValue.value === 'number') {
-      selectedValue.value.splice(addValue.value, 1);
+    if (typeof editMyValues.value === 'number') {
+      selectedValueArr.value.splice(editMyValues.value, 1);
     }
-    valueDialog.value = false;
-    addValue.value = true;
+    valuesDialogOpen.value = false;
+    editMyValues.value = null;
     slide.value = 0;
   });
 };
-const goalDialogOpen = () => {
-  $q.dialog({ cancel: true, dark: true }).onOk(() => {
-    goalArr.value.push('goal' + j.value++);
+const goalsDialogOpen = () => {
+  createNewTargetDialog('Goal', (data) => {
+    selectedGoalArr.value.push(data);
+  });
+};
+const deleteGoal = (index: number) => {
+  deleteDialog(() => {
+    selectedGoalArr.value.splice(index, 1);
   });
 };
 const taskDialogOpen = () => {
-  $q.dialog({ cancel: true, dark: true }).onOk(() => {
-    target.value['task' + i.value++] = false;
+  createNewTargetDialog('Task', (data: string) => {
+    weeklyTaskList.value[data] = false;
   });
 };
-// const  = () => {};
+const deleteTask = (key: string) => {
+  deleteDialog(() => {
+    delete weeklyTaskList.value[key];
+  });
+};
 
 onMounted(() => {
   const btn = document.getElementById('valueBtn');

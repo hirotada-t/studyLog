@@ -259,6 +259,7 @@ const props = defineProps<{
   logData: LogItems | null;
   editLogIndex: number | null;
 }>();
+const emits = defineEmits<{ (e: 'complete-update'): void }>();
 
 const dialog = ref<{
   open: boolean;
@@ -335,11 +336,11 @@ const fixTime = () => {
   dialog.value.target = 'end';
 };
 const updateContent = () => {
-
   if (!props.logData) {
     store.setLog(props.pageDate, logOfWork.value);
   } else if (props.editLogIndex || props.editLogIndex === 0) {
     store.updateLog(props.pageDate, props.editLogIndex, logOfWork.value);
   } else return;
+  emits('complete-update');
 };
 </script>
