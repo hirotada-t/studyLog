@@ -129,17 +129,17 @@
         <q-item
           v-for="(val, index) of selectedGoalArr"
           :key="index"
-          class="flex items-center text-h5 text-weight-light"
+          class="flex items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
         >
-          <q-btn
-            @click="deleteGoal(index)"
-            icon="fa-regular fa-trash-can"
-            padding="0 sm 0 0"
-            flat
-            size="sm"
-          />
-          {{ '/ ' + val }}
+        {{ val }}
+        <q-btn
+          @click="deleteGoal(index)"
+          icon="fa-regular fa-trash-can"
+          padding="none"
+          flat
+          size="sm"
+        />
         </q-item>
         <q-item
           clickable
@@ -167,31 +167,33 @@
       <q-list dark separator>
         <q-item
           clickable
-          v-for="(val, key, index) of weeklyTargetArr"
-          :key="index"
-          class="items-center"
-          style="min-height: auto; padding-right: 0"
-          :style="
-            !val
-              ? ''
-              : 'text-decoration:line-through;text-decoration-style:double;'
-          "
-          @click="weeklyTargetArr[key] = !weeklyTargetArr[key]"
+          v-for="(val, key) of weeklyTargetObj"
+          :key="key"
+          class="items-center justify-between text-h5 text-weight-light"
+          style="min-height: auto"
         >
           <q-checkbox
-            v-model="weeklyTargetArr[key]"
+            v-model="weeklyTargetObj[key]"
             color="green"
             dense
             class="q-pr-sm"
             dark
+            :style="!val ? '' : 'text-decoration:line-through double #ff4040;'"
           >
             <div
               class="overflow-eclipse"
-              :style="`width: ${-80 + Screen.width}px;`"
+              :style="`width: ${-80 + Screen.width -40 }px;`"
             >
               {{ key }}
             </div>
           </q-checkbox>
+          <q-btn
+            @click="deleteTask(key.toString())"
+            icon="fa-regular fa-trash-can"
+            padding="0 sm 0 0"
+            flat
+            size="sm"
+          />
         </q-item>
         <q-item clickable @click="taskDialogOpen">
           <q-item-section class="text-center text-h6 q-pt-md">
@@ -218,7 +220,7 @@ const selectedValueArr = ref<string[]>([]);
 const valuesDialogOpen = ref<boolean>(false);
 const editMyValues = ref<number | null>(null);
 const selectedGoalArr = ref<string[]>([]);
-const weeklyTargetArr = ref<{ [key: string]: boolean }>({});
+const weeklyTargetObj = ref<{ [key: string]: boolean }>({});
 
 const updateValueImg = () => {
   if (typeof editMyValues.value === 'number') {
@@ -251,8 +253,13 @@ const deleteGoal = (index: number) => {
   });
 };
 const taskDialogOpen = () => {
-  createNewTargetDialog('Task', (data) => {
-    weeklyTargetArr.value[data] = false;
+  createNewTargetDialog('Task', (data: string) => {
+    weeklyTargetObj.value[data] = false;
+  });
+};
+const deleteTask = (key: string) => {
+  deleteDialog(() => {
+    delete weeklyTargetObj.value[key];
   });
 };
 
