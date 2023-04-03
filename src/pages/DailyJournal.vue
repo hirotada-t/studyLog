@@ -74,7 +74,12 @@
                 avatar
                 style="align-items: center; padding-left: 0; min-width: auto"
               >
-                <q-btn icon="fa-regular fa-trash-can" padding="none" flat size="sm" />
+                <q-btn
+                  icon="fa-regular fa-trash-can"
+                  padding="none"
+                  flat
+                  size="sm"
+                />
               </q-item-section>
               <q-item-section
                 class="q-mx-sm q-my-xs"
@@ -111,6 +116,7 @@
               :timeMS="0"
               :editLogIndex="editLogIndex"
               :logData="logForDialog"
+              @complete-update="recordArr = recordThisWeek()"
             />
           </q-dialog>
         </div>
@@ -200,7 +206,7 @@ const carousel = ref();
 const dialog = ref<boolean>(false);
 const dailyTotalHoursMS = ref<number>(store.getDailyTotalHoursMS(store.today));
 const rateOfAchievement = ref<number>(0);
-const doc = ref();
+const docPageContainer = ref();
 const dailyData = ref();
 const workList = ref();
 const weeklyData = ref();
@@ -257,14 +263,14 @@ watch(
       (newItem + 1) * 48 +
       weeklyData.value.clientHeight;
     if (belowContentHeight > visibleArea + 48) {
-      doc.value?.classList.add('adjust-page');
+      docPageContainer.value?.classList.add('adjust-page');
     } else if (belowContentHeight > visibleArea) {
-      doc.value?.classList.add('adjust-page-3lists');
+      docPageContainer.value?.classList.add('adjust-page-3lists');
     }
   }
 );
 onMounted(() => {
-  doc.value = document.querySelector('.q-page-container');
+  docPageContainer.value = document.querySelector('.q-page-container');
   const dailyContentHeight = dailyData.value.clientHeight;
   const workListHeight = workList.value.clientHeight;
   const weeklyContentHeight = weeklyData.value.clientHeight;
@@ -273,9 +279,9 @@ onMounted(() => {
     dailyContentHeight + workListHeight + weeklyContentHeight;
 
   if (belowContentHeight > visibleArea + 48) {
-    doc.value?.classList.add('adjust-page');
+    docPageContainer.value?.classList.add('adjust-page');
   } else if (belowContentHeight > visibleArea) {
-    doc.value?.classList.add('adjust-page-3lists');
+    docPageContainer.value?.classList.add('adjust-page-3lists');
   }
   rateOfAchievement.value =
     (dailyTotalHoursMS.value * 100) / store.weeklyTarget;

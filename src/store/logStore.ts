@@ -17,9 +17,6 @@ export const useLogStore = defineStore('log', {
     get: () => {
       console.log();
     },
-    getRecordOfWeek: () => {
-      console.log();
-    },
     getDailyTotalHoursMS: (state) => {
       return (date: string): number => {
         const arr = state.weeklyLogList.get(date);
@@ -44,11 +41,12 @@ export const useLogStore = defineStore('log', {
         value.startMS,
         value.studyMS
       );
+      // 毎週毎にリストを空にして新規作成する必要があるかもしれない
       // if (this.dayOfWeek === 'Su' && !log) {
       //   this.weeklyLogList.clear();
       // }
       if (!this.weeklyLogList.get(ymd)) {
-        this.weeklyLogList.set(this.today, []);
+        this.weeklyLogList.set(ymd, []);
       }
 
       const log = this.weeklyLogList.get(ymd);
