@@ -12,12 +12,16 @@
         />
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
-        <div class="col-4" v-for="(val, index) of selectedValue" :key="index">
+        <div
+          class="col-4"
+          v-for="(val, index) of selectedValueArr"
+          :key="index"
+        >
           <q-card
             @click="
-              addValue = index;
+              editMyValues = index;
               slide = valueImgArr.indexOf(val);
-              valueDialog = true;
+              valuesDialogOpen = true;
             "
             class="bg333"
             style="border-radius: 15px"
@@ -33,10 +37,10 @@
             </q-img>
           </q-card>
         </div>
-        <div class="col-4" v-if="selectedValue.length < 3">
+        <div class="col-4" v-if="selectedValueArr.length < 3">
           <q-card
             id="valueBtn"
-            @click="valueDialog = true"
+            @click="valuesDialogOpen = true"
             class="bg333 flex flex-center"
             style="border-radius: 15px"
             :style="`height: ${valueBtnHeight}px;`"
@@ -45,7 +49,7 @@
           </q-card>
         </div>
 
-        <q-dialog v-model="valueDialog" full-width>
+        <q-dialog v-model="valuesDialogOpen" full-width>
           <q-card dark>
             <q-card-section>
               <q-carousel
@@ -86,7 +90,7 @@
               <q-btn
                 flat
                 icon="delete"
-                v-if="typeof addValue === 'number'"
+                v-if="typeof editMyValues === 'number'"
                 round
                 @click="deleteValue"
               />
@@ -95,8 +99,8 @@
                 label="Cancel"
                 color="primary"
                 @click="
-                  valueDialog = false;
-                  addValue = true;
+                  valuesDialogOpen = false;
+                  editMyValues = null;
                   slide = 0;
                 "
               />
@@ -123,12 +127,19 @@
       </h2>
       <q-list dense>
         <q-item
-          v-for="(val, index) of goalArr"
+          v-for="(val, index) of selectedGoalArr"
           :key="index"
           style="min-height: auto"
           >{{ val }}</q-item
         >
-        <q-item clickable @click="goalDialogOpen">
+        <q-item
+          clickable
+          @click="
+            setTMPGoalArr = JSON.parse(JSON.stringify(selectedGoalArr));
+            aGoalInput = '';
+            goalsDialogOpen = true;
+          "
+        >
           <q-item-section class="text-center text-h6">
             <q-item-label>
               Add
@@ -136,6 +147,59 @@
             </q-item-label>
           </q-item-section>
         </q-item>
+        <q-dialog v-model="goalsDialogOpen" full-width>
+          <q-card dark>
+            <q-card-section>
+              <q-list dense>
+                <q-item
+                  v-for="(val, index) of setTMPGoalArr"
+                  :key="index"
+                  style="min-height: auto"
+                  >{{ val }}</q-item
+                >
+              </q-list>
+            </q-card-section>
+            <q-card-section align="center">
+              <form @submit.prevent.stop="onAddGoal">
+                <div class="flex flex-center">
+                  <q-input
+                    ref="goalRef"
+                    dark
+                    clearable
+                    filled
+                    hide-bottom-space
+                    v-model="aGoalInput"
+                    class="col"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && setTMPGoalArr.length < 3) ||
+                        'Please type something',
+                    ]"
+                  />
+                  <q-btn type="submit" icon="add" padding="0 0 0 sm" />
+                </div>
+              </form>
+            </q-card-section>
+
+            <q-card-actions align="center">
+              <q-btn
+                @click="setTMPGoalArr.splice(0)"
+                flat
+                label="cancel"
+                color="primary"
+                v-close-popup
+              />
+              <q-btn
+                @click="onDecidedGoal()"
+                flat
+                label="OK"
+                color="dark"
+                class="bg-primary text-bold"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-list>
       <h2 class="q-mb-xs text-h5">
         Weekly Tasks
@@ -191,44 +255,58 @@ import { ref, onMounted } from 'vue';
 
 const valueImgArr = ['Challenge', 'Burning', 'Explore'];
 const $q = useQuasar();
-const slide = ref(0);
+const slide = ref<number>(0);
 const valueBtnHeight = ref<number>(0);
-const selectedValue = ref<string[]>([]);
-const addValue = ref<true | number>(true);
-const goalArr = ref<string[]>([]);
+const selectedValueArr = ref<string[]>([]);
+const valuesDialogOpen = ref<boolean>(false);
+const editMyValues = ref<number | null>(null);
+const goalsDialogOpen = ref<boolean>(false);
+const selectedGoalArr = ref<string[]>([]);
+const setTMPGoalArr = ref<string[]>([]);
+const aGoalInput = ref<string>('');
+const goalRef = ref();
 const target = ref<{ [key: string]: boolean }>({});
-const i = ref(1);
 const j = ref(1);
-const valueDialog = ref<boolean>(false);
 
 const updateValueImg = () => {
-  if (typeof addValue.value === 'number') {
-    selectedValue.value[addValue.value] = valueImgArr[slide.value];
+  if (typeof editMyValues.value === 'number') {
+    selectedValueArr.value[editMyValues.value] = valueImgArr[slide.value];
   } else {
-    selectedValue.value.push(valueImgArr[slide.value]);
+    selectedValueArr.value.push(valueImgArr[slide.value]);
   }
-  valueDialog.value = false;
-  addValue.value = true;
+  valuesDialogOpen.value = false;
+  editMyValues.value = null;
   slide.value = 0;
 };
 const deleteValue = () => {
   deleteDialog(() => {
-    if (typeof addValue.value === 'number') {
-      selectedValue.value.splice(addValue.value, 1);
+    if (typeof editMyValues.value === 'number') {
+      selectedValueArr.value.splice(editMyValues.value, 1);
     }
-    valueDialog.value = false;
-    addValue.value = true;
+    valuesDialogOpen.value = false;
+    editMyValues.value = null;
     slide.value = 0;
   });
 };
-const goalDialogOpen = () => {
-  $q.dialog({ cancel: true, dark: true }).onOk(() => {
-    goalArr.value.push('goal' + j.value++);
-  });
+const onAddGoal = () => {
+  if (validateGoalInput()) return;
+  setTMPGoalArr.value.push(aGoalInput.value);
+  aGoalInput.value = '';
+  goalRef.value.resetValidation();
+};
+const onDecidedGoal = () => {
+  if (validateGoalInput() && setTMPGoalArr.value.length === 0) return;
+  onAddGoal();
+  selectedGoalArr.value = JSON.parse(JSON.stringify(setTMPGoalArr.value));
+  goalsDialogOpen.value = false;
+};
+const validateGoalInput = (): boolean => {
+  goalRef.value.validate();
+  return goalRef.value.hasError;
 };
 const taskDialogOpen = () => {
   $q.dialog({ cancel: true, dark: true }).onOk(() => {
-    target.value['task' + i.value++] = false;
+    target.value['task' + j.value++] = false;
   });
 };
 // const  = () => {};
