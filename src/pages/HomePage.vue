@@ -132,14 +132,14 @@
           class="flex items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
         >
-        {{ val }}
-        <q-btn
-          @click="deleteGoal(index)"
-          icon="fa-regular fa-trash-can"
-          padding="none"
-          flat
-          size="sm"
-        />
+          {{ val }}
+          <q-btn
+            @click="deleteGoal(index)"
+            icon="fa-regular fa-trash-can"
+            padding="none"
+            flat
+            size="sm"
+          />
         </q-item>
         <q-item
           clickable
@@ -167,13 +167,13 @@
       <q-list dark separator>
         <q-item
           clickable
-          v-for="(val, key) of weeklyTargetObj"
+          v-for="(val, key) of weeklyTaskList"
           :key="key"
           class="items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
         >
           <q-checkbox
-            v-model="weeklyTargetObj[key]"
+            v-model="weeklyTaskList[key]"
             color="green"
             dense
             class="q-pr-sm"
@@ -182,7 +182,7 @@
           >
             <div
               class="overflow-eclipse"
-              :style="`width: ${-80 + Screen.width -40 }px;`"
+              :style="`width: ${-80 + Screen.width - 40}px;`"
             >
               {{ key }}
             </div>
@@ -195,7 +195,11 @@
             size="sm"
           />
         </q-item>
-        <q-item clickable @click="taskDialogOpen">
+        <q-item
+          clickable
+          v-if="Object.keys(weeklyTaskList).length < 5"
+          @click="taskDialogOpen"
+        >
           <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
               Add
@@ -220,7 +224,7 @@ const selectedValueArr = ref<string[]>([]);
 const valuesDialogOpen = ref<boolean>(false);
 const editMyValues = ref<number | null>(null);
 const selectedGoalArr = ref<string[]>([]);
-const weeklyTargetObj = ref<{ [key: string]: boolean }>({});
+const weeklyTaskList = ref<{ [key: string]: boolean }>({});
 
 const updateValueImg = () => {
   if (typeof editMyValues.value === 'number') {
@@ -254,12 +258,12 @@ const deleteGoal = (index: number) => {
 };
 const taskDialogOpen = () => {
   createNewTargetDialog('Task', (data: string) => {
-    weeklyTargetObj.value[data] = false;
+    weeklyTaskList.value[data] = false;
   });
 };
 const deleteTask = (key: string) => {
   deleteDialog(() => {
-    delete weeklyTargetObj.value[key];
+    delete weeklyTaskList.value[key];
   });
 };
 
