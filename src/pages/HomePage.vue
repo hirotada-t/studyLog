@@ -159,7 +159,7 @@
         <q-dialog v-model="goalsDialogOpen" full-width>
           <q-card dark>
             <q-card-section>
-              <div class="text-h6">Create New Goal</div>
+              <div class="text-h6">Create New Goal.</div>
             </q-card-section>
 
             <q-card-section align="center">
@@ -201,32 +201,37 @@
           class="q-ml-md"
         />
       </h2>
-      <q-list dense>
+      <q-list dark separator>
         <q-item
           clickable
-          v-for="(val, key, index) of target"
+          v-for="(val, key, index) of weeklyTargetArr"
           :key="index"
           class="items-center"
-          style="min-height: auto"
+          style="min-height: auto; padding-right: 0"
           :style="
             !val
               ? ''
               : 'text-decoration:line-through;text-decoration-style:double;'
           "
-          @click="target[key] = !target[key]"
+          @click="weeklyTargetArr[key] = !weeklyTargetArr[key]"
         >
           <q-checkbox
-            v-model="target[key]"
+            v-model="weeklyTargetArr[key]"
             color="green"
             dense
             class="q-pr-sm"
             dark
           >
-            {{ key }}
+            <div
+              class="overflow-eclipse"
+              :style="`width: ${-80 + Screen.width}px;`"
+            >
+              {{ key }}
+            </div>
           </q-checkbox>
         </q-item>
         <q-item clickable @click="taskDialogOpen">
-          <q-item-section class="text-center text-h6">
+          <q-item-section class="text-center text-h6 q-pt-md">
             <q-item-label>
               Add
               <q-icon name="add" />
@@ -239,7 +244,7 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
+import { Screen, useQuasar } from 'quasar';
 import { deleteDialog } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
@@ -254,8 +259,7 @@ const goalsDialogOpen = ref<boolean>(false);
 const selectedGoalArr = ref<string[]>([]);
 const aGoalInput = ref<string>('');
 const goalRef = ref();
-const target = ref<{ [key: string]: boolean }>({});
-const j = ref(1);
+const weeklyTargetArr = ref<{ [key: string]: boolean }>({});
 
 const updateValueImg = () => {
   if (typeof editMyValues.value === 'number') {
@@ -290,11 +294,25 @@ const deleteGoal = (index: number) => {
   });
 };
 const taskDialogOpen = () => {
-  $q.dialog({ cancel: true, dark: true }).onOk(() => {
-    target.value['task' + j.value++] = false;
+  $q.dialog({
+    dark: true,
+    title: 'Create New Task.',
+    prompt: {
+      model: '',
+      isValid: (val) => val.length !== 0,
+      type: 'text',
+    },
+    ok: {
+      color: 'dark',
+      flat: true,
+      Style: 'background-color:#ffb31a;',
+    },
+    cancel: true,
+    class: 'btns-center',
+  }).onOk((data) => {
+    weeklyTargetArr.value[data] = false;
   });
 };
-// const  = () => {};
 
 onMounted(() => {
   const btn = document.getElementById('valueBtn');

@@ -13,3 +13,10 @@
 .bg333 {
   background-color: #333333 !important;
 }
+
+.overflow-eclipse {
+  // 使用時には幅の指定が必須
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
