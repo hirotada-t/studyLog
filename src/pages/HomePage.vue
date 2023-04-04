@@ -3,13 +3,14 @@
     <div ref="contents" style="padding-bottom: 120px">
       <h2 class="q-mt-none q-mb-xs text-h5">
         Your Own Value
-        <!-- <q-btn
+        <q-btn
           icon="mdi-help-circle-outline"
           round
           flat
           dense
           class="q-ml-md"
-        /> -->
+          disable
+        />
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
         <div class="col-4" v-for="(val, index) of store.MyValue" :key="index">
@@ -111,13 +112,14 @@
       </div>
       <h2 class="q-mb-xs text-h5">
         Your Own Goal<span class="q-ml-sm text-body2">(up to 3)</span>
-        <!-- <q-btn
+        <q-btn
           icon="mdi-help-circle-outline"
           round
           flat
           dense
           class="q-ml-md"
-        /> -->
+          disable
+        />
       </h2>
       <q-list dense dark separator>
         <q-item
@@ -150,13 +152,14 @@
       </q-list>
       <h2 class="q-mb-xs text-h5">
         Weekly Tasks<span class="q-ml-sm text-body2">(up to 5)</span>
-        <!-- <q-btn
+        <q-btn
           icon="mdi-help-circle-outline"
           round
           flat
           dense
           class="q-ml-md"
-        /> -->
+          disable
+        />
       </h2>
       <q-list dark separator>
         <q-item

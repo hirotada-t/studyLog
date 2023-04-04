@@ -53,6 +53,7 @@
                 round
                 target="_blank"
                 :href="shareUrl"
+                disable
               />
             </div>
           </div>
