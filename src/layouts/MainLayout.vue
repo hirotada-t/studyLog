@@ -29,14 +29,14 @@
         </q-btn>
         <q-tabs align="justify" indicator-color="transparent">
           <q-route-tab name="home" to="/" icon="home" />
+          <q-tab disable />
           <q-route-tab
             name="dailyJournal"
             to="/dailyJournal"
             icon="mdi-notebook"
           />
-          <q-tab disable />
-          <q-route-tab name="summary" to="/summary" icon="mdi-poll" />
-          <q-route-tab name="settings" to="/settings" icon="mdi-cog" />
+          <!-- <q-route-tab name="summary" to="/summary" icon="mdi-poll" />
+          <q-route-tab name="settings" to="/settings" icon="mdi-cog" /> -->
         </q-tabs>
       </q-footer>
     </q-layout>
