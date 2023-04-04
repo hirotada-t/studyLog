@@ -8,7 +8,7 @@ export type LogState = {
 };
 
 export type HomeState = {
-  selectedValue: string[];
-  selectedGoal: string[];
+  MyValue: string[];
+  MyGoal: string[];
   weeklyTaskList: { [key: string]: boolean };
 };

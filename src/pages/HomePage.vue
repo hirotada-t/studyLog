@@ -12,11 +12,7 @@
         />
       </h2>
       <div class="row q-col-gutter-sm items-stretch">
-        <div
-          class="col-4"
-          v-for="(val, index) of store.selectedValue"
-          :key="index"
-        >
+        <div class="col-4" v-for="(val, index) of store.MyValue" :key="index">
           <q-card
             @click="
               indexOfValue = index;
@@ -37,7 +33,7 @@
             </q-img>
           </q-card>
         </div>
-        <div class="col-4" v-if="store.selectedValue.length < 3">
+        <div class="col-4" v-if="store.MyValue.length < 3">
           <q-card
             id="valueBtn"
             @click="valuesDialogOpen = true"
@@ -125,7 +121,7 @@
       </h2>
       <q-list dense dark separator>
         <q-item
-          v-for="(val, index) of store.selectedGoal"
+          v-for="(val, index) of store.MyGoal"
           :key="index"
           class="flex items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
@@ -141,7 +137,7 @@
         </q-item>
         <q-item
           clickable
-          v-if="store.selectedGoal.length < 3"
+          v-if="store.MyGoal.length < 3"
           @click="goalsDialogOpen"
         >
           <q-item-section class="text-center text-h6 q-pt-md">
@@ -225,9 +221,9 @@ const indexOfValue = ref<number | null>(null);
 
 const updateValueImg = () => {
   if (typeof indexOfValue.value === 'number') {
-    store.selectedValue[indexOfValue.value] = valueImgArr[slide.value];
+    store.setValue(indexOfValue.value, valueImgArr[slide.value]);
   } else {
-    store.selectedValue.push(valueImgArr[slide.value]);
+    store.setValue(null, valueImgArr[slide.value]);
   }
   valuesDialogOpen.value = false;
   indexOfValue.value = null;
@@ -236,7 +232,7 @@ const updateValueImg = () => {
 const deleteValue = () => {
   deleteDialog(() => {
     if (typeof indexOfValue.value === 'number') {
-      store.selectedValue.splice(indexOfValue.value, 1);
+      store.delValue(indexOfValue.value);
     }
     valuesDialogOpen.value = false;
     indexOfValue.value = null;
@@ -244,23 +240,23 @@ const deleteValue = () => {
   });
 };
 const goalsDialogOpen = () => {
-  createNewTargetDialog('Goal', (data) => {
-    store.selectedGoal.push(data);
+  createNewTargetDialog('Goal', (data: string) => {
+    store.setGoal(data);
   });
 };
 const deleteGoal = (index: number) => {
   deleteDialog(() => {
-    store.selectedGoal.splice(index, 1);
+    store.delGoal(index);
   });
 };
 const taskDialogOpen = () => {
   createNewTargetDialog('Task', (data: string) => {
-    store.weeklyTaskList[data] = false;
+    store.setTask(data);
   });
 };
 const deleteTask = (key: string) => {
   deleteDialog(() => {
-    delete store.weeklyTaskList[key];
+    store.delTask(key);
   });
 };
 
