@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
-import { State } from 'src/types/store.interface';
+import { LogState } from 'src/types/store.interface';
 import { LogItems } from 'src/types/util.interface';
 import { createInitArr, insertToEmptyTitle } from 'src/utils/storeFunc';
 
 const timeStamp = Date.now();
 
 export const useLogStore = defineStore('log', {
-  state: (): State => ({
+  state: (): LogState => ({
     weeklyLogList: new Map(),
     today: date.formatDate(timeStamp, 'YYYY/MM/DD'),
     dayOfWeek: date.formatDate(timeStamp, 'dd'),

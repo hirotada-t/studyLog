@@ -14,12 +14,12 @@
       <div class="row q-col-gutter-sm items-stretch">
         <div
           class="col-4"
-          v-for="(val, index) of selectedValueArr"
+          v-for="(val, index) of store.selectedValue"
           :key="index"
         >
           <q-card
             @click="
-              editMyValues = index;
+              indexOfValue = index;
               slide = valueImgArr.indexOf(val);
               valuesDialogOpen = true;
             "
@@ -37,7 +37,7 @@
             </q-img>
           </q-card>
         </div>
-        <div class="col-4" v-if="selectedValueArr.length < 3">
+        <div class="col-4" v-if="store.selectedValue.length < 3">
           <q-card
             id="valueBtn"
             @click="valuesDialogOpen = true"
@@ -83,14 +83,12 @@
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>
-
             <q-separator dark inset />
-
             <q-card-actions align="center" class="q-py-md">
               <q-btn
                 flat
                 icon="fa-regular fa-trash-can"
-                v-if="typeof editMyValues === 'number'"
+                v-if="typeof indexOfValue === 'number'"
                 round
                 @click="deleteValue"
               />
@@ -100,7 +98,7 @@
                 color="primary"
                 @click="
                   valuesDialogOpen = false;
-                  editMyValues = null;
+                  indexOfValue = null;
                   slide = 0;
                 "
               />
@@ -127,7 +125,7 @@
       </h2>
       <q-list dense dark separator>
         <q-item
-          v-for="(val, index) of selectedGoalArr"
+          v-for="(val, index) of store.selectedGoal"
           :key="index"
           class="flex items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
@@ -143,7 +141,7 @@
         </q-item>
         <q-item
           clickable
-          v-if="selectedGoalArr.length < 3"
+          v-if="store.selectedGoal.length < 3"
           @click="goalsDialogOpen"
         >
           <q-item-section class="text-center text-h6 q-pt-md">
@@ -167,13 +165,13 @@
       <q-list dark separator>
         <q-item
           clickable
-          v-for="(val, key) of weeklyTaskList"
+          v-for="(val, key) of store.weeklyTaskList"
           :key="key"
           class="items-center justify-between text-h5 text-weight-light"
           style="min-height: auto"
         >
           <q-checkbox
-            v-model="weeklyTaskList[key]"
+            v-model="store.weeklyTaskList[key]"
             color="green"
             dense
             class="q-pr-sm"
@@ -197,7 +195,7 @@
         </q-item>
         <q-item
           clickable
-          v-if="Object.keys(weeklyTaskList).length < 5"
+          v-if="Object.keys(store.weeklyTaskList).length < 5"
           @click="taskDialogOpen"
         >
           <q-item-section class="text-center text-h6 q-pt-md">
@@ -214,56 +212,55 @@
 
 <script setup lang="ts">
 import { Screen } from 'quasar';
+import { useHomeStore } from 'src/store/homeStore';
 import { deleteDialog, createNewTargetDialog } from 'src/utils/func';
 import { ref, onMounted } from 'vue';
 
 const valueImgArr = ['Challenge', 'Burning', 'Explore'];
+const store = useHomeStore();
 const slide = ref<number>(0);
 const valueBtnHeight = ref<number>(0);
-const selectedValueArr = ref<string[]>([]);
 const valuesDialogOpen = ref<boolean>(false);
-const editMyValues = ref<number | null>(null);
-const selectedGoalArr = ref<string[]>([]);
-const weeklyTaskList = ref<{ [key: string]: boolean }>({});
+const indexOfValue = ref<number | null>(null);
 
 const updateValueImg = () => {
-  if (typeof editMyValues.value === 'number') {
-    selectedValueArr.value[editMyValues.value] = valueImgArr[slide.value];
+  if (typeof indexOfValue.value === 'number') {
+    store.selectedValue[indexOfValue.value] = valueImgArr[slide.value];
   } else {
-    selectedValueArr.value.push(valueImgArr[slide.value]);
+    store.selectedValue.push(valueImgArr[slide.value]);
   }
   valuesDialogOpen.value = false;
-  editMyValues.value = null;
+  indexOfValue.value = null;
   slide.value = 0;
 };
 const deleteValue = () => {
   deleteDialog(() => {
-    if (typeof editMyValues.value === 'number') {
-      selectedValueArr.value.splice(editMyValues.value, 1);
+    if (typeof indexOfValue.value === 'number') {
+      store.selectedValue.splice(indexOfValue.value, 1);
     }
     valuesDialogOpen.value = false;
-    editMyValues.value = null;
+    indexOfValue.value = null;
     slide.value = 0;
   });
 };
 const goalsDialogOpen = () => {
   createNewTargetDialog('Goal', (data) => {
-    selectedGoalArr.value.push(data);
+    store.selectedGoal.push(data);
   });
 };
 const deleteGoal = (index: number) => {
   deleteDialog(() => {
-    selectedGoalArr.value.splice(index, 1);
+    store.selectedGoal.splice(index, 1);
   });
 };
 const taskDialogOpen = () => {
   createNewTargetDialog('Task', (data: string) => {
-    weeklyTaskList.value[data] = false;
+    store.weeklyTaskList[data] = false;
   });
 };
 const deleteTask = (key: string) => {
   deleteDialog(() => {
-    delete weeklyTaskList.value[key];
+    delete store.weeklyTaskList[key];
   });
 };
 
