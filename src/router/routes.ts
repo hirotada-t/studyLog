@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Settings',
         path: 'settings',
-        component: () => import('src/pages/del/StoreSample.vue'),
+        component: () => import('src/pages/SettingPage.vue'),
       },
     ],
   },

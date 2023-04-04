@@ -60,6 +60,7 @@
         label="share on twitter"
         icon="ios_share"
         color="primary"
+        disable
       />
       <q-scroll-area
         :thumb-style="{

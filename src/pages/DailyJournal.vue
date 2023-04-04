@@ -53,6 +53,7 @@
                 round
                 target="_blank"
                 :href="shareUrl"
+                disable
               />
             </div>
           </div>
@@ -153,14 +154,14 @@
               {{ dd }}
             </q-knob>
           </q-btn>
-          <q-btn
+          <!-- <q-btn
             to="/summary/weekly"
             round
             style="padding: 0 0.5vw"
             size="15px"
             icon="mdi-chart-box-plus-outline"
             color="grey-10"
-          />
+          /> -->
         </div>
       </div>
       <q-carousel-control position="bottom">
