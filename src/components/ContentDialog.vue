@@ -86,6 +86,7 @@
             dense
             clearable
             maxlength="20"
+            class="w-100pc"
           >
             <template v-slot:prepend>
               <q-icon name="edit" size="small" />
@@ -99,6 +100,7 @@
             v-model="logOfWork.category"
             :options="categoryList"
             dense
+            class="w-100pc"
           >
           </q-select>
           <q-btn
@@ -156,13 +158,14 @@
             dense
             hide-dropdown-icon
             new-value-mode="add-unique"
+            class="w-100pc"
           >
             <template v-slot:prepend>
               <q-icon name="local_offer" size="small" />
             </template>
           </q-select>
-          <p class="text-left q-mb-none">Level of Focus</p>
-          <q-item class="q-mt-none q-pa-none">
+          <p class="text-left q-mb-none w-100pc">Level of Focus</p>
+          <q-item class="q-mt-none q-pa-none w-100pc">
             <q-item-section side class="align-end">
               <q-icon
                 @click="logOfWork.focusLevel < 2 ? 1 : logOfWork.focusLevel--"
@@ -223,6 +226,8 @@
             v-model="logOfWork.studyContents"
             dense
             type="textarea"
+            class="w-100pc"
+            style="width: 100%"
           />
         </q-form>
       </q-scroll-area>
